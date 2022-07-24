@@ -57,7 +57,7 @@ namespace NSE.Identity.API
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,//sempre validar o emissor do token
                     ValidateAudience = true,//onde esse token é valido
-                    ValidAudiences = appSettings.ValidoEm,//audiencia valida
+                    ValidAudience = appSettings.ValidoEm,//audiencia valida
                     ValidIssuer = appSettings.Emissor //emissor valido (onde esse token sera valido)
                 };
             });
@@ -68,7 +68,7 @@ namespace NSE.Identity.API
                 c.SwaggerDoc(name:"v1",new OpenApiInfo {
                     Title = "NerdStore Enterprise Identity API",
                     Description = "Esta API faz parte do curso ASP.NET Core Enterprise Applications.",
-                    Contact = new OpenApiContact() { Name = "Eduardo Pires", Email = "contato@desenvolvedor.io" },
+                    Contact = new OpenApiContact() { Name = "Marcus Fernando Correa Barbosa", Email = "marcusfcbarbosa@hotmail.com" },
                     License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
                 });
             });
