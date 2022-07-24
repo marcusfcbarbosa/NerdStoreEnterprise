@@ -10,9 +10,16 @@ namespace NSE.Identity.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly SignInManager<IdentityUser> _signInManager;///gerencia questoes de login  classes do proprio Identity
-        private readonly UserManager<IdentityUser> _userManager;//Como administra o usuario       |classes do proprio Identity
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
         //private readonly AppSettings _appSettings;
+        public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        {
+            _signInManager = signInManager;
+            _userManager = userManager;
+        }
+
+        
 
 
         [HttpPost("nova-conta")]
