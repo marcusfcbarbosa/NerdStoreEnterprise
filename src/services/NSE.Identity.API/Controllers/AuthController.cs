@@ -16,8 +16,7 @@ using System.Threading.Tasks;
 namespace NSE.Identity.API.Controllers
 {
     [Route("api/identidade")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : MainController
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
@@ -34,7 +33,7 @@ namespace NSE.Identity.API.Controllers
         public async Task<ActionResult> Registrar(UsuarioRegistro usuarioRegistro)
         {
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return CustomReponse(ModelState);
             var user = new IdentityUser
             {
                 UserName = usuarioRegistro.Email,
@@ -44,22 +43,31 @@ namespace NSE.Identity.API.Controllers
             var result = await _userManager.CreateAsync(user, usuarioRegistro.Senha);
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return Ok();
+                return CustomReponse(await GerarJwt(usuarioRegistro.Email));
             }
-            return BadRequest(result.Errors);
+            result.Errors.ForEach(x => AdicionarErrosProcessamento(x.Description));
+            return CustomReponse();
         }
 
         [HttpPost("autenticar")]
         public async Task<ActionResult> Login(UsuarioLogin usuarioLogin)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            var resulst = await _signInManager.PasswordSignInAsync(userName: usuarioLogin.Email, password: usuarioLogin.Senha, isPersistent: false, lockoutOnFailure: true);
-            if (resulst.Succeeded)
+            if (!ModelState.IsValid) return CustomReponse(ModelState);
+            var result = await _signInManager.PasswordSignInAsync(userName: usuarioLogin.Email, password: usuarioLogin.Senha, isPersistent: false, lockoutOnFailure: true);//lockoutOnFailure = prevenção contra ataque de força bruta
+            if (result.Succeeded)
             {
-                return Ok(await GerarJwt(usuarioLogin.Email));
+                return CustomReponse(await GerarJwt(usuarioLogin.Email));
             }
-            return BadRequest();
+            AdicionarErrosProcessamento(RetornaMotivoBloqueio(result));
+            return CustomReponse();
+        }
+
+        private string RetornaMotivoBloqueio(Microsoft.AspNetCore.Identity.SignInResult result)
+        {
+            if (result.IsLockedOut) return "Usuario esta bloqueado por tentativas invalidas";
+            if (result.IsNotAllowed) return "Usuario não esta autorizado";
+            if (result.RequiresTwoFactor) return "Requer autentição em duas etapas";
+            return "Usuario ou senha não reconhecidos";   
         }
         private async Task<UsuarioRespostaLogin> GerarJwt(string email)
         {
