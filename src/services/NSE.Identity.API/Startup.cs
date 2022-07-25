@@ -32,6 +32,7 @@ namespace NSE.Identity.API
 
             services.AddDefaultIdentity<IdentityUser>()
                 .AddRoles<IdentityRole>()
+                .AddErrorDescriber<IdentitysMensagensPortugues>()//Customizando para exibir mensagens em Português
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
 
