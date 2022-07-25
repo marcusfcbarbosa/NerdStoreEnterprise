@@ -61,13 +61,14 @@ namespace NSE.Identity.API.Controllers
             AdicionarErrosProcessamento(RetornaMotivoBloqueio(result));
             return CustomReponse();
         }
-
+       
+        #region "Metodos Privados"
         private string RetornaMotivoBloqueio(Microsoft.AspNetCore.Identity.SignInResult result)
         {
             if (result.IsLockedOut) return "Usuario esta bloqueado por tentativas invalidas";
             if (result.IsNotAllowed) return "Usuario não esta autorizado";
             if (result.RequiresTwoFactor) return "Requer autentição em duas etapas";
-            return "Usuario ou senha não reconhecidos";   
+            return "Usuario ou senha não reconhecidos";
         }
         private async Task<UsuarioRespostaLogin> GerarJwt(string email)
         {
@@ -96,7 +97,6 @@ namespace NSE.Identity.API.Controllers
         private async Task<ClaimsIdentity> ObterClaimsUsuario(ICollection<Claim> claims, IdentityUser user)
         {
             var userRoles = await _userManager.GetRolesAsync(user);
-
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));//valor do token
@@ -126,8 +126,9 @@ namespace NSE.Identity.API.Controllers
                 }
             };
         }
-
         private static long ToUnixEpochDate(DateTime date)
             => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+        #endregion
+
     }
 }
