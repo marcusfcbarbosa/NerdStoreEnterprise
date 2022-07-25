@@ -1,17 +1,9 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using NSE.Identity.API.Data;
-using NSE.Identity.API.Extensions;
-using System;
-using System.Text;
+using NSE.Identity.API.Configuration;
 
 namespace NSE.Identity.API
 {
@@ -38,81 +30,20 @@ namespace NSE.Identity.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDBContext>(optionsAction: options 
-                => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddRoles<IdentityRole>()
-                .AddErrorDescriber<IdentitysMensagensPortugues>()//Customizando para exibir mensagens em Português
-                .AddEntityFrameworkStores<ApplicationDBContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentityConfiguration(Configuration);
+            services.AddApiConfiguration();
+            services.AddSwaggerConfiguration();
 
 
-            // JWT
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(bearerOptions =>
-            {
-                bearerOptions.RequireHttpsMetadata = true;
-                bearerOptions.SaveToken = true;
-                bearerOptions.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,//sempre validar o emissor do token
-                    ValidateAudience = true,//onde esse token é valido
-                    ValidAudience = appSettings.ValidoEm,//audiencia valida
-                    ValidIssuer = appSettings.Emissor //emissor valido (onde esse token sera valido)
-                };
-            });
-
-            services.AddControllers();
-
-            services.AddSwaggerGen(c => {
-                c.SwaggerDoc(name:"v1",new OpenApiInfo {
-                    Title = "NerdStore Enterprise Identity API",
-                    Description = "Esta API faz parte do curso ASP.NET Core Enterprise Applications.",
-                    Contact = new OpenApiContact() { Name = "Marcus Fernando Correa Barbosa", Email = "marcusfcbarbosa@hotmail.com" },
-                    License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
-                });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint(url:"/swagger/v1/swagger.json", name:"v1");
-            });
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseSwaggerConfiguration();
+            app.AddApplication(env);
 
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseAuthentication();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-            
         }
     }
 }
