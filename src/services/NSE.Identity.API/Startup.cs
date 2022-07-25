@@ -17,12 +17,23 @@ namespace NSE.Identity.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
+        public Startup(IHostEnvironment hostEnvironment)
+        {
+            //preparando a aplicação para saber de qual appsettings ela deve estar lendo
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(hostEnvironment.ContentRootPath)
+               .AddJsonFile("appsettings.json", true, true)
+               .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", true, true) //Aqui ele le o ambiente
+               .AddEnvironmentVariables();
+
+            if (hostEnvironment.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
+            Configuration = builder.Build();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
