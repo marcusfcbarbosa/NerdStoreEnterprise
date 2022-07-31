@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace NSE.WebApp.MVC.Controllers
 {
-    public class IdentityController : Controller
+    public class IdentityController : MainController
     {
         private readonly IAutenticacaoService _autenticacaoService;
 
@@ -35,7 +35,7 @@ namespace NSE.WebApp.MVC.Controllers
             if (!ModelState.IsValid) return View(usuarioRegistro);
 
             //API Registro
-            await _autenticacaoService.Registro<string>(usuarioRegistro);
+            await _autenticacaoService.Registro<UsuarioRespostaLogin>(usuarioRegistro);
 
             //Realizar Login no APP
 
@@ -57,16 +57,16 @@ namespace NSE.WebApp.MVC.Controllers
             if (!ModelState.IsValid) return View(usuarioLogin);
 
             //API Registro
-            var result = await _autenticacaoService.Login<UsuarioRespostaLogin>(usuarioLogin);
-            if(result != default(UsuarioRespostaLogin))
+            var result = await _autenticacaoService.Login(usuarioLogin);
+            if(!ResponsePossuiErros(result.ResponseResult))
             {
                 //Salvando os dados do JWT no Cookie da aplicação
                 await RealizarLogin(result);
-                return RedirectToAction(actionName: "Index", controllerName: "Home");
-            }
+                return View(usuarioLogin);
                 
+            }
+            return RedirectToAction(actionName: "Index", controllerName: "Home");
 
-            return View(usuarioLogin);
         }
 
         [HttpGet]
