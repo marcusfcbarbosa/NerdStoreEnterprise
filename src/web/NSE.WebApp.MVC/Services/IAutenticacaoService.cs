@@ -28,7 +28,9 @@ namespace NSE.WebApp.MVC.Services
             {
                 var loginContent = new StringContent(JsonSerializer.Serialize(usuarioLogin), encoding: Encoding.UTF8, mediaType: "application/json");
                 var response = await _httpClient.PostAsync(requestUri: "https://localhost:44307/api/identidade/autenticar", content: loginContent);
-                return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync());
+                
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), options);
             }
             catch (Exception ex)
             {

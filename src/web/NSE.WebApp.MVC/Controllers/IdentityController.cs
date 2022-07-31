@@ -51,11 +51,11 @@ namespace NSE.WebApp.MVC.Controllers
             if (!ModelState.IsValid) return View(usuarioLogin);
 
             //API Registro
-            var result = await _autenticacaoService.Login<string>(usuarioLogin);
-
-            //Realizar Login no APP
-
-            return RedirectToAction(actionName: "Index", controllerName: "Home");
+            var result = await _autenticacaoService.Login<UsuarioRespostaLogin>(usuarioLogin);
+            if(result != default(UsuarioRespostaLogin))
+                return RedirectToAction(actionName: "Index", controllerName: "Home");
+            
+            return View(usuarioLogin);
         }
 
         [HttpGet]
