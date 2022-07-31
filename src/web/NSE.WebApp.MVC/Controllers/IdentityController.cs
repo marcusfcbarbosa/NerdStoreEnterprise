@@ -62,17 +62,16 @@ namespace NSE.WebApp.MVC.Controllers
             {
                 //Salvando os dados do JWT no Cookie da aplicação
                 await RealizarLogin(result);
-                return View(usuarioLogin);
-                
+                return RedirectToAction(actionName: "Index", controllerName: "Home");
             }
-            return RedirectToAction(actionName: "Index", controllerName: "Home");
-
+            return View(usuarioLogin);
         }
 
         [HttpGet]
         [Route("logout")]
         public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); 
             return RedirectToAction("Index", "Home");
         }
 
