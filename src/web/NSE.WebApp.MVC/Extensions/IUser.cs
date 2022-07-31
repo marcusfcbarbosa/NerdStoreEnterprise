@@ -19,8 +19,7 @@ namespace NSE.WebApp.MVC.Extensions
 
     public class AspNetUser : IUser
     {
-        private readonly IHttpContextAccessor _accessor;
-
+        private readonly IHttpContextAccessor _accessor;//interface responsavel por obter dados do contexto da requisição http
         public AspNetUser(IHttpContextAccessor accessor)
         {
             _accessor = accessor;
