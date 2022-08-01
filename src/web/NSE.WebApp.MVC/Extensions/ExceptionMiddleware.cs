@@ -31,7 +31,7 @@ namespace NSE.WebApp.MVC.Extensions
             switch (httpRequestException._statusCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");
+                    context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");//ReturnUrl=Pega a rota que estava antes de ter gerado a Exception (de onde vc estava vindo)
                     return;
             }
             context.Response.StatusCode = (int)httpRequestException._statusCode;

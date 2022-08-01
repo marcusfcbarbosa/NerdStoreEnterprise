@@ -32,16 +32,15 @@ namespace NSE.WebApp.MVC.Controllers
         [Route("nova-conta")]
         public async Task<IActionResult> Registro(UsuarioRegistro usuarioRegistro)
         {
-
-            return new StatusCodeResult(401);
             if (!ModelState.IsValid) return View(usuarioRegistro);
 
-            //API Registro
-            await _autenticacaoService.Registro(usuarioRegistro);
+            var resposta = await _autenticacaoService.Registro(usuarioRegistro);
 
-            //Realizar Login no APP
+            if (ResponsePossuiErros(resposta.ResponseResult)) return View(usuarioRegistro);
 
-            return RedirectToAction(actionName:"Index",controllerName: "Home");
+            await RealizarLogin(resposta);
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -56,15 +55,18 @@ namespace NSE.WebApp.MVC.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(UsuarioLogin usuarioLogin, string returnUrl = null)
         {
+            
             if (!ModelState.IsValid) return View(usuarioLogin);
-
             //API Registro
             var result = await _autenticacaoService.Login(usuarioLogin);
             if(!ResponsePossuiErros(result.ResponseResult))
             {
                 //Salvando os dados do JWT no Cookie da aplicação
                 await RealizarLogin(result);
-                return RedirectToAction(actionName: "Index", controllerName: "Home");
+                if (string.IsNullOrEmpty(returnUrl))
+                    RedirectToAction(actionName: "Index", controllerName: "Home");
+                        
+                 return LocalRedirect(returnUrl);
             }
             return View(usuarioLogin);
         }
