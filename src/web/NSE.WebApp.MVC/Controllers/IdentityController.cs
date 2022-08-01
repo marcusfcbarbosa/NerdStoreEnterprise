@@ -32,10 +32,12 @@ namespace NSE.WebApp.MVC.Controllers
         [Route("nova-conta")]
         public async Task<IActionResult> Registro(UsuarioRegistro usuarioRegistro)
         {
+
+            return new StatusCodeResult(401);
             if (!ModelState.IsValid) return View(usuarioRegistro);
 
             //API Registro
-            await _autenticacaoService.Registro<UsuarioRespostaLogin>(usuarioRegistro);
+            await _autenticacaoService.Registro(usuarioRegistro);
 
             //Realizar Login no APP
 
