@@ -15,9 +15,7 @@ namespace NSE.WebApp.MVC.Services
         Task<T> Registro<T>(UsuarioRegistro usuarioRegistro) where T : class;//Precisa pensar num formato para ter retorno das mensagens em Generic
         Task<UsuarioRespostaLogin> Login(UsuarioLogin usuarioLogin);
         Task<UsuarioRespostaLogin> Registro(UsuarioRegistro usuarioRegistro);
-
     }
-
     public class AutenticacaoService : Service, IAutenticacaoService
     {
         private readonly HttpClient _httpClient;
@@ -66,14 +64,14 @@ namespace NSE.WebApp.MVC.Services
         {
 
             var registroContent = ObterConteudo(usuarioRegistro);
-            var response = await _httpClient.PostAsync(requestUri: "https://localhost:44307/api/identidade/nova-conta", content: registroContent);
+            var response = await _httpClient.PostAsync(requestUri: "/api/identidade/nova-conta", content: registroContent);
             return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<UsuarioRespostaLogin> Registro(UsuarioRegistro usuarioRegistro)
         {
             var registroContent = ObterConteudo(usuarioRegistro);
-            var response = await _httpClient.PostAsync(requestUri: $"{_settings.AutenticacaoUrl}/api/identidade/nova-conta", content: registroContent);
+            var response = await _httpClient.PostAsync(requestUri: $"/api/identidade/nova-conta", content: registroContent);
             if (!TratarErrosResponse(response))
             {
                 return new UsuarioRespostaLogin
