@@ -1,4 +1,6 @@
-﻿using NSE.WebApp.MVC.Models;
+﻿using Microsoft.Extensions.Options;
+using NSE.WebApp.MVC.Extensions;
+using NSE.WebApp.MVC.Models;
 using System;
 using System.Net.Http;
 using System.Text;
@@ -19,9 +21,12 @@ namespace NSE.WebApp.MVC.Services
     public class AutenticacaoService : Service, IAutenticacaoService
     {
         private readonly HttpClient _httpClient;
-        public AutenticacaoService(HttpClient httpClient)
+        private readonly AppSettings _settings;//ler dos arquivos appSettings.Developement
+        public AutenticacaoService(HttpClient httpClient,
+            IOptions<AppSettings> settings)
         {
             _httpClient = httpClient;
+            _settings = settings.Value;
         }
         public async Task<T> Login<T>(UsuarioLogin usuarioLogin) where T : class
         {
@@ -44,9 +49,8 @@ namespace NSE.WebApp.MVC.Services
         }
         public async Task<UsuarioRespostaLogin> Login(UsuarioLogin usuarioLogin)
         {
-
             var loginContent = ObterConteudo(usuarioLogin);
-            var response = await _httpClient.PostAsync(requestUri: "https://localhost:44307/api/identidade/autenticar", content: loginContent);
+            var response = await _httpClient.PostAsync(requestUri: $"{_settings.AutenticacaoUrl}/api/identidade/autenticar", content: loginContent);
             if (!TratarErrosResponse(response))
             {
                 return new UsuarioRespostaLogin
@@ -59,7 +63,7 @@ namespace NSE.WebApp.MVC.Services
 
         public async Task<T> Registro<T>(UsuarioRegistro usuarioRegistro) where T : class
         {
-            
+
             var registroContent = ObterConteudo(usuarioRegistro);
             var response = await _httpClient.PostAsync(requestUri: "https://localhost:44307/api/identidade/nova-conta", content: registroContent);
             return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync());
@@ -67,8 +71,8 @@ namespace NSE.WebApp.MVC.Services
 
         public async Task<UsuarioRespostaLogin> Registro(UsuarioRegistro usuarioRegistro)
         {
-            var registroContent = ObterConteudo(usuarioRegistro); 
-            var response = await _httpClient.PostAsync(requestUri: "https://localhost:44307/api/identidade/nova-conta", content: registroContent);
+            var registroContent = ObterConteudo(usuarioRegistro);
+            var response = await _httpClient.PostAsync(requestUri: $"{_settings.AutenticacaoUrl}/api/identidade/nova-conta", content: registroContent);
             if (!TratarErrosResponse(response))
             {
                 return new UsuarioRespostaLogin
