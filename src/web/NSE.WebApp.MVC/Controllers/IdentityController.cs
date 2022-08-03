@@ -64,7 +64,7 @@ namespace NSE.WebApp.MVC.Controllers
                 //Salvando os dados do JWT no Cookie da aplicação
                 await RealizarLogin(result);
                 if (string.IsNullOrEmpty(returnUrl))
-                    RedirectToAction(actionName: "Index", controllerName: "Home");
+                  return RedirectToAction(actionName: "Index", controllerName: "Home");
                         
                  return LocalRedirect(returnUrl);
             }
