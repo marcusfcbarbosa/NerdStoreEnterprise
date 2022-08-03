@@ -26,7 +26,8 @@ namespace NSE.WebApp.MVC.Services
             IOptions<AppSettings> settings)
         {
             _httpClient = httpClient;
-            _settings = settings.Value;
+            _httpClient.BaseAddress = new Uri(settings.Value.AutenticacaoUrl);
+            
         }
         public async Task<T> Login<T>(UsuarioLogin usuarioLogin) where T : class
         {
@@ -50,7 +51,7 @@ namespace NSE.WebApp.MVC.Services
         public async Task<UsuarioRespostaLogin> Login(UsuarioLogin usuarioLogin)
         {
             var loginContent = ObterConteudo(usuarioLogin);
-            var response = await _httpClient.PostAsync(requestUri: $"{_settings.AutenticacaoUrl}/api/identidade/autenticar", content: loginContent);
+            var response = await _httpClient.PostAsync(requestUri: $"/api/identidade/autenticar", content: loginContent);
             if (!TratarErrosResponse(response))
             {
                 return new UsuarioRespostaLogin
