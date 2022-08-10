@@ -23,10 +23,12 @@ namespace NSE.WebApp.MVC.Services
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(settings.Value.CatalogoUrl);
+            
         }
         public async Task<ProdutoViewModel> ObterPorId(Guid id)
         {
             var response = await _httpClient.GetAsync(requestUri: $"/catalogo/produtos/{id}");
+
             TratarErrosResponse(response);
             return await DeserializarObjetoResponse<ProdutoViewModel>(response);
         }
