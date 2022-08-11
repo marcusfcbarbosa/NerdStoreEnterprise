@@ -28,7 +28,6 @@ namespace NSE.WebApp.MVC.Controllers
         public IActionResult Error(int id)
         {
             var modelErro = new ErrorViewModel();
-
             if (id == 500)
             {
                 modelErro.Mensagem = "Ocorreu um erro! Tente novamente mais tarde ou contate nosso suporte.";

@@ -17,6 +17,5 @@ namespace NSE.WebApp.MVC.Extensions
         {
             _statusCode = StatusCode;
         }
-
     }
 }

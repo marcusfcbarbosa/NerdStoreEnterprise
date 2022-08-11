@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Refit;
 
 namespace NSE.WebApp.MVC.Extensions
 {
@@ -20,8 +21,10 @@ namespace NSE.WebApp.MVC.Extensions
             }
             catch (CustomHttpRequestException ex)
             {
-
                 HandleRequestExceptionAsyn(httpContext,ex);
+            }catch(ValidationApiException ex)
+            {
+                HandleRequestExceptionAsyn(httpContext, ex.StatusCode);
             }
         }
 
@@ -35,6 +38,17 @@ namespace NSE.WebApp.MVC.Extensions
                     return;
             }
             context.Response.StatusCode = (int)httpRequestException._statusCode;
+        }
+        //adequado para trabalhar com refit
+        private static void HandleRequestExceptionAsyn(HttpContext context, HttpStatusCode httpStatusCode)
+        {
+            switch (httpStatusCode)
+            {
+                case HttpStatusCode.Unauthorized:
+                    context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");//ReturnUrl=Pega a rota que estava antes de ter gerado a Exception (de onde vc estava vindo)
+                    return;
+            }
+            context.Response.StatusCode = (int)httpStatusCode;
         }
     }
 }
