@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using NSE.WebApi.Core.Identidade;
+using System.Net;
 
 namespace NSE.Catalogo.API.Controllers
 {
@@ -31,6 +32,7 @@ namespace NSE.Catalogo.API.Controllers
         [HttpGet("catalogo/produtos/{id}")]
         public async Task<Produto> ProdutoDetalhe(Guid id)
         {
+            //throw new Exception(message:"Erro");
             return await _produtoRepository.ObterPorId(id);
         }
     }
