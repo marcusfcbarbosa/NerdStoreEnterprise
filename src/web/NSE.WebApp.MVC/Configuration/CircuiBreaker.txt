@@ -1,0 +1,6 @@
+﻿Estados do Circuit Breaker
+
+Closed = esta operando normalmente
+Open = tudo paro
+HalfOpen = houve um erro e esta pra abrir o circuito
+Isolated = foi aberto manualmente (de maneira intecional)
