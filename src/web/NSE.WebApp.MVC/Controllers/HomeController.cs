@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSE.WebApp.MVC.Models;
-using System.Diagnostics;
 
 namespace NSE.WebApp.MVC.Controllers
 {
@@ -32,6 +31,12 @@ namespace NSE.WebApp.MVC.Controllers
             {
                 modelErro.Mensagem = "Ocorreu um erro! Tente novamente mais tarde ou contate nosso suporte.";
                 modelErro.Titulo = "Ocorreu um erro!";
+                modelErro.ErroCode = id;
+            }
+            else if (id == 503)
+            {
+                modelErro.Mensagem = "Sistema Temporariamente Indisponivel.";
+                modelErro.Titulo = "Ops!";
                 modelErro.ErroCode = id;
             }
             else if (id == 404)

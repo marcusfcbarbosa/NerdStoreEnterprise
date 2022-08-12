@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Polly.CircuitBreaker;
 using Refit;
 
 namespace NSE.WebApp.MVC.Extensions
@@ -26,6 +27,10 @@ namespace NSE.WebApp.MVC.Extensions
             {
                 HandleRequestExceptionAsyn(httpContext, ex.StatusCode);
             }
+            catch (BrokenCircuitException)
+            {
+                HandleCircuitBreakerExceptionAsync(httpContext);
+            }
         }
 
         //todo erro que acontece passa por aqui
@@ -49,6 +54,11 @@ namespace NSE.WebApp.MVC.Extensions
                     return;
             }
             context.Response.StatusCode = (int)httpStatusCode;
+        }
+        private static void HandleCircuitBreakerExceptionAsync(HttpContext context)
+        {
+
+            context.Response.Redirect(location: "/erro/503");
         }
     }
 }
