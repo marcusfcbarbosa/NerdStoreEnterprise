@@ -11,13 +11,24 @@ namespace NSE.Cliente.API.Models
         public string Cpf { get; private set; }
         public bool Status { get; private set; }
         public Endereco Endereco { get; private set; }
-        public Cliente(string nome, string email, string cpf)
+        public Cliente(Guid id,string nome, string email, string cpf)
         {
+            Id = id;
             Nome = nome;
-            Email = email;
-            Cpf = cpf;
+            Email = new Email(email).Endereco;
+            Cpf = new Cpf(cpf).Numero;
             Status = true;
         }
+
+        public void TrocarEmail(string email)
+        {
+            Email = new Email(email).Endereco;
+        }
+        public void AtribuirEndereco(Endereco endereco)
+        {
+            Endereco = endereco;
+        }
+
     }
     public class Endereco : Entity
     {
@@ -31,7 +42,7 @@ namespace NSE.Cliente.API.Models
         public string Cidade { get; private set; }
         public string Estado { get; private set; }
         protected Endereco() { }
-        public Endereco(string nome, string numero, string complemento, 
+        public Endereco(string nome, string numero, string complemento,
             string bairro, string cep, string cidade, string estado)
         {
             Nome = nome;
