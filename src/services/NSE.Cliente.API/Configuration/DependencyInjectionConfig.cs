@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NSE.Cliente.API.Application.Commands;
 using NSE.Cliente.API.Data;
+using NSE.Cliente.API.Data.Repositories;
 using NSE.Core.Mediator;
 
 namespace NSE.Cliente.API.Configuration
@@ -16,6 +17,8 @@ namespace NSE.Cliente.API.Configuration
             
             services.AddScoped<IRequestHandler<RegistrarClientCommand,ValidationResult>, ClienteCommandHandler>();
 
+            services.AddScoped<IClienteRepository, ClienteRepository>();
+            
             services.AddScoped<ClientesContext>();
         }
     }
