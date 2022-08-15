@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NSE.Identity.API.Extensions;
 using NSE.Identity.API.Models;
+using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Identidade;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace NSE.Identity.API.Controllers
         [HttpPost("nova-conta")]
         public async Task<ActionResult> Registrar(UsuarioRegistro usuarioRegistro)
         {
-            if (!ModelState.IsValid) return CustomReponse(ModelState);
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
             var user = new IdentityUser
             {
                 UserName = usuarioRegistro.Email,
@@ -43,23 +44,23 @@ namespace NSE.Identity.API.Controllers
             var result = await _userManager.CreateAsync(user, usuarioRegistro.Senha);
             if (result.Succeeded)
             {
-                return CustomReponse(await GerarJwt(usuarioRegistro.Email));
+                return CustomResponse(await GerarJwt(usuarioRegistro.Email));
             }
-            result.Errors.ForEach(x => AdicionarErrosProcessamento(x.Description));
-            return CustomReponse();
+            result.Errors.ForEach(x => AdicionarErroProcessamento(x.Description));
+            return CustomResponse();
         }
 
         [HttpPost("autenticar")]
         public async Task<ActionResult> Login(UsuarioLogin usuarioLogin)
         {
-            if (!ModelState.IsValid) return CustomReponse(ModelState);
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
             var result = await _signInManager.PasswordSignInAsync(userName: usuarioLogin.Email, password: usuarioLogin.Senha, isPersistent: false, lockoutOnFailure: true);//lockoutOnFailure = prevenção contra ataque de força bruta
             if (result.Succeeded)
             {
-                return CustomReponse(await GerarJwt(usuarioLogin.Email));
+                return CustomResponse(await GerarJwt(usuarioLogin.Email));
             }
-            AdicionarErrosProcessamento(RetornaMotivoBloqueio(result));
-            return CustomReponse();
+            AdicionarErroProcessamento(RetornaMotivoBloqueio(result));
+            return CustomResponse();
         }
        
         #region "Metodos Privados"

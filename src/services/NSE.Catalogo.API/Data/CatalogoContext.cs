@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
 using NSE.Catalogo.API.Models;
 using NSE.Core.Data;
+using NSE.Core.Messages;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +17,9 @@ namespace NSE.Catalogo.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Ignore<ValidationResult>();
+            modelBuilder.Ignore<Event>();
+
             //para os textos que nao sao informados o tamanho, por padrao ficam varchar(100)
             //previnir o nvarchar(MAX)
             foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(
