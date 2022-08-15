@@ -34,9 +34,9 @@ namespace NSE.Catalogo.API.Data.Repository
             _context.Produtos.Add(produto);
         }
 
-        public void Atualizar(Produto produto)
+        public async Task Atualizar(Produto produto)
         {
-            _context.Produtos.Update(produto);
+             _context.Produtos.Update(produto);
         }
 
         public void Dispose()

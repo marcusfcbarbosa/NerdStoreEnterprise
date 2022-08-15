@@ -10,7 +10,7 @@ namespace NSE.Core.Data
         Task<IEnumerable<T>> ObterTodos();
         Task<T> ObterPorId(Guid id);
         void Adicionar(T entity);
-        public void Atualizar(T entity);
+        Task Atualizar(T entity);
     }
 
 
