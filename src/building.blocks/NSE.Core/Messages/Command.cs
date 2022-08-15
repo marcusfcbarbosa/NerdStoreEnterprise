@@ -10,7 +10,7 @@ namespace NSE.Core.Messages
     { 
         public DateTime TimeStamp { get; private set; }
 
-        public ValidationResult validationResult { get; private set; }
+        public ValidationResult validationResult { get;  set; }
         public Command()
         {
             TimeStamp = DateTime.Now;
