@@ -23,8 +23,8 @@ namespace NSE.Cliente.API.Application.Commands
         {
             if (!message.EhValido()) return message.validationResult;
 
-            var idCliente = Guid.NewGuid();
-            var cliente = new Clientes(idCliente, message.Nome, message.Email, message.Cpf);
+            
+            var cliente = new Clientes(message.Id, message.Nome, message.Email, message.Cpf);
             //validação
             var previousClient = await _clienteRepository.ObterPorCpf(cliente.Cpf.Numero);
             if (previousClient != default(Clientes)) { 
@@ -33,7 +33,7 @@ namespace NSE.Cliente.API.Application.Commands
             }
             _clienteRepository.Adicionar(cliente);
             //Após o cliente Criado disparar Evento de boas vindas ou quaisquer coisas que o EventHandler tratar
-            cliente.AdicionarEvento(new ClienteRegistradoEvent(idCliente, message.Nome, message.Email, message.Cpf));
+            cliente.AdicionarEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Cpf));
             return await PersistirDados(_clienteRepository.unitOfWork);
         }
 
