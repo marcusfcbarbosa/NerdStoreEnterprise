@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSE.WebApp.MVC.Extensions;
@@ -16,6 +17,7 @@ namespace NSE.WebApp.MVC.Configuration
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
 
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
@@ -25,7 +27,7 @@ namespace NSE.WebApp.MVC.Configuration
             //services.AddHttpClient<ICatalogoService, CatalogoService>()
             //    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
             //    .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(retryCount: 3, sleepDurationProvider: _ => TimeSpan.FromMilliseconds(600)));
-            
+
             //Segunda ipo de HttpClientFactory usando Retry com Polly
             services.AddHttpClient<ICatalogoService, CatalogoService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
@@ -33,16 +35,14 @@ namespace NSE.WebApp.MVC.Configuration
                 .AddTransientHttpErrorPolicy
                 (p=>p.CircuitBreakerAsync(handledEventsAllowedBeforeBreaking:5,TimeSpan.FromSeconds(30)));//após 5 tentativas, corta e só fecha depois de 30 segundos sem acessar qualquer rota dentro da aplicaçao
 
-
-
             services.AddHttpClient(name: "Refit", configureClient: options =>
             {
                 options.BaseAddress = new Uri(uriString: configuration.GetSection(key: "CatalogoUrl").Value);
             }).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
                 .AddTypedClient(Refit.RestService.For<ICatalogoServiceRefit>);
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUser, AspNetUser>();
-
         }
     }
     public class PollyExtensions

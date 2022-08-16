@@ -6,17 +6,20 @@ namespace NSE.Cliente.API.Application.Commands
 {
     public class RegistrarClientCommand : Command
     {
+        public Guid Id { get; private set; }
         public string Nome { get; private set; }
         public string Email { get; private set; }
         public string Cpf { get; private set; }
 
-        public RegistrarClientCommand(string nome, string email, string cpf)
+        public RegistrarClientCommand(Guid id, string nome, string email, string cpf)
         {
             AggregateId = Guid.NewGuid();
+            Id = id;
             Nome = nome;
             Email = email;
             Cpf = cpf;
         }
+
         public override bool EhValido()
         {
             validationResult = new RegistrarClientValidation().Validate(instance:this);
