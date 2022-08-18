@@ -1,8 +1,8 @@
 ﻿para baixar a imagem
 docker run -d --hostname rabbit-host --name rabbit-nerdstore -p 15672:15672 -p 5672:5672 rabbitmq:management
 
-porta do publisher :15672
-porta do subscriber :5672
+porta do portal :15672 (http://localhost:15672/#/)
+porta do Rabbitmq :5672
 
 AMQP
 Advanced Message Queing Protocol
