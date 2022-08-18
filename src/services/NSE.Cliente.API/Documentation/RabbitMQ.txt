@@ -1,0 +1,34 @@
+﻿para baixar a imagem
+docker run -d --hostname rabbit-host --name rabbit-nerdstore -p 15672:15672 -p 5672:5672 rabbitmq:management
+
+porta do publisher :15672
+porta do subscriber :5672
+
+AMQP
+Advanced Message Queing Protocol
+
+Publisher =====Canal===> Subscriber
+
+Exchange => responsaveis por receber uma mensagem e enviar para uma fila
+
+Bindings => Fazem a liga;áo entre os Exchange e as filas
+
+RouteKeys => Palavras chaves de roteamento das mensagens
+
+Queues => Fila Local de armazenamento das mensagens 
+
+Consumer (Subscriber) => As mensagens sao retiradas da fila, através de um consumer
+
+========================================================
+http://localhost:15672/#/
+usuario guest
+Senha guest
+========================================================
+Iremos trabalhar com RPC Request Reply Pattern
+========================================================
+https://easynetq.com/
+
+Usaremos esse setup basico para trabalhar com Rabbitmq
+nao precisa se preocupar com factory, nem outras preocupações que quando vc faz passo a passo
+FACILITA A VIDA
+========================================================
