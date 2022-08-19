@@ -27,13 +27,13 @@ namespace NSE.Identity.API.Controllers
         private readonly AppSettings _appSettings;
         private IBus _bus;
 
-        public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager,
-                             IOptions<AppSettings> appSettings, IBus bus)
+        public AuthController(SignInManager<IdentityUser> signInManager, 
+                             UserManager<IdentityUser> userManager,
+                             IOptions<AppSettings> appSettings)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;//tem que ser em IOptions para poder ler o json
-            _bus = bus;
         }
 
         [HttpPost("nova-conta")]
@@ -75,12 +75,23 @@ namespace NSE.Identity.API.Controllers
         private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
         {
             var usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
+
             var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(
                 Guid.Parse(usuario.Id), usuarioRegistro.Nome, usuarioRegistro.Email, usuarioRegistro.Cpf);
+
             //para enviar precisa do https://easynetq.com/ Install-Package EasyNetQ 
             _bus = RabbitHutch.CreateBus(connectionString: "host=localhost:5672");
-            var sucesso = await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
-            return sucesso;
+            try
+            {
+                return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+            }
+            catch(Exception e)
+            {
+                string er = e.Message;
+                await _userManager.DeleteAsync(usuario);
+                throw;
+            }
+            
         }
 
         #endregion
