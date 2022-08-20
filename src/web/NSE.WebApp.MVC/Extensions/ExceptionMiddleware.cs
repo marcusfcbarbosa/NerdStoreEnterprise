@@ -22,17 +22,31 @@ namespace NSE.WebApp.MVC.Extensions
             }
             catch (CustomHttpRequestException ex)
             {
-                HandleRequestExceptionAsyn(httpContext,ex);
-            }catch(ValidationApiException ex)
+                HandleRequestExceptionAsync(httpContext, ex._statusCode);
+            }
+            catch (ValidationApiException ex)
             {
-                HandleRequestExceptionAsyn(httpContext, ex.StatusCode);
+                HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+            }
+            catch (ApiException ex)
+            {
+                HandleRequestExceptionAsync(httpContext, ex.StatusCode);
             }
             catch (BrokenCircuitException)
             {
                 HandleCircuitBreakerExceptionAsync(httpContext);
             }
         }
+        private static void HandleRequestExceptionAsync(HttpContext context, HttpStatusCode statusCode)
+        {
+            if (statusCode == HttpStatusCode.Unauthorized)
+            {
+                context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");
+                return;
+            }
 
+            context.Response.StatusCode = (int)statusCode;
+        }
         //todo erro que acontece passa por aqui
         private static void HandleRequestExceptionAsyn(HttpContext context, CustomHttpRequestException httpRequestException)
         {

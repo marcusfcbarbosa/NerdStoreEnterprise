@@ -8,9 +8,9 @@ namespace NSE.WebApp.MVC.Controllers
     {
         protected bool ResponsePossuiErros(ResponseResult resposta)
         {
-            if(resposta != null && resposta.Errors.Messages.Any())
+            if(resposta != null && resposta.Errors.Mensagens.Any())
             {
-                resposta.Errors.Messages.ForEach(x => ModelState.AddModelError(key:string.Empty,errorMessage: x));
+                resposta.Errors.Mensagens.ForEach(x => ModelState.AddModelError(key:string.Empty,errorMessage: x));
                 return true;
             }
             return false;
