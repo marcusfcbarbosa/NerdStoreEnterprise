@@ -39,6 +39,7 @@ namespace NSE.MessageBus
     public class MessageBus : IMessageBus
     {
         public IBus _bus;
+        private IAdvancedBus _advancedBus;
         private readonly string _connectionString;
 
         public MessageBus(string connectionString)
@@ -46,6 +47,8 @@ namespace NSE.MessageBus
             _connectionString = connectionString;
             TryConnect();
         }
+        public bool IsConnected => _bus?.IsConnected ?? false;
+        public IAdvancedBus AdvancedBus => _bus?.Advanced;//Manipulação de resiliencia, em caso de queda da fila poder subir novamente a Subscription
         private void TryConnect()
         {
             if (IsConnected) return;
@@ -55,14 +58,25 @@ namespace NSE.MessageBus
                 .WaitAndRetry(3, retryAttempt => //3 tentativas e para cada tentativa espere 2,4,8 segundos
                     TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
-            policy.Execute(action: () => { _bus = RabbitHutch.CreateBus(_connectionString); });
+            policy.Execute(action: () => { 
+                _bus = RabbitHutch.CreateBus(_connectionString);
+                _advancedBus = _bus.Advanced;
+                _advancedBus.Disconnected += OnDisconnect;//evento OnDisconnect
+            });
 
             _bus = RabbitHutch.CreateBus(_connectionString);
         }
 
-        public bool IsConnected => _bus?.IsConnected ?? false;
+        private void OnDisconnect(object s, EventArgs e) {
 
-        public IAdvancedBus AdvancedBus => throw new NotImplementedException();
+            //assim que ela desconectar, tentar imediatamente reconectar
+            var policy = Policy.Handle<EasyNetQException>()
+                .Or<BrokerUnreachableException>()
+                .RetryForever();
+            policy.Execute(TryConnect);
+        }
+
+        
         public void Dispose()
         {
             _bus.Dispose();
