@@ -85,13 +85,11 @@ namespace NSE.Identity.API.Controllers
             {
                 return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
             }
-            catch(Exception e)
+            catch
             {
-                string er = e.Message;
                 await _userManager.DeleteAsync(usuario);
                 throw;
             }
-            
         }
 
         #endregion
