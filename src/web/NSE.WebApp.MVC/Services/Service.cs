@@ -23,19 +23,20 @@ namespace NSE.WebApp.MVC.Services
 
         protected bool TratarErrosResponse(HttpResponseMessage response)
         {
-            return (int)response.StatusCode switch
+            switch ((int)response.StatusCode)
             {
-                400 => false,
-                401 => false,
-                403 => false,
-                404 => false,
-                500 => throw new CustomHttpRequestException(response.StatusCode),
-                _ => (((Func<bool>)(() =>
-               {
-                   response.EnsureSuccessStatusCode();
-                   return true;
-               }))())
-            };
+                case 401:
+                case 403:
+                case 404:
+                case 500:
+                    throw new CustomHttpRequestException(response.StatusCode);
+
+                case 400:
+                    return false;
+            }
+
+            response.EnsureSuccessStatusCode();
+            return true;
         }
     }
 }

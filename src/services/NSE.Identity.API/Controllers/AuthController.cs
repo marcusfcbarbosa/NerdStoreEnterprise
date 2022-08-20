@@ -1,11 +1,11 @@
-﻿using EasyNetQ;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NSE.Core.Messages.Integration;
 using NSE.Identity.API.Extensions;
 using NSE.Identity.API.Models;
+using NSE.MessageBus;
 using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Identidade;
 using System;
@@ -25,15 +25,17 @@ namespace NSE.Identity.API.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
-        private IBus _bus;
+        private readonly IMessageBus _bus;
 
-        public AuthController(SignInManager<IdentityUser> signInManager, 
+        public AuthController(SignInManager<IdentityUser> signInManager,
                              UserManager<IdentityUser> userManager,
-                             IOptions<AppSettings> appSettings)
+                             IOptions<AppSettings> appSettings,
+                             IMessageBus bus)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;//tem que ser em IOptions para poder ler o json
+            _bus = bus;
         }
 
         [HttpPost("nova-conta")]
@@ -50,8 +52,11 @@ namespace NSE.Identity.API.Controllers
             if (result.Succeeded)
             {
                 //lançar evento de integração
-                var sucesso = await RegistrarCliente(usuarioRegistro);
-
+                var clienteResult = await RegistrarCliente(usuarioRegistro);
+                if (!clienteResult.ValidationResult.IsValid) {
+                    await _userManager.DeleteAsync(user);
+                    return CustomResponse(clienteResult.ValidationResult);
+                }
                 return CustomResponse(await GerarJwt(usuarioRegistro.Email));
             }
             result.Errors.ForEach(x => AdicionarErroProcessamento(x.Description));
@@ -75,12 +80,8 @@ namespace NSE.Identity.API.Controllers
         private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
         {
             var usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
-
             var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(
                 Guid.Parse(usuario.Id), usuarioRegistro.Nome, usuarioRegistro.Email, usuarioRegistro.Cpf);
-
-            //para enviar precisa do https://easynetq.com/ Install-Package EasyNetQ 
-            _bus = RabbitHutch.CreateBus(connectionString: "host=localhost:5672");
             try
             {
                 return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
