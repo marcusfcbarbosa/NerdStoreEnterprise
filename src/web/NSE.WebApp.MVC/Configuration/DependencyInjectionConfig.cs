@@ -35,11 +35,11 @@ namespace NSE.WebApp.MVC.Configuration
                 .AddTransientHttpErrorPolicy
                 (p=>p.CircuitBreakerAsync(handledEventsAllowedBeforeBreaking:5,TimeSpan.FromSeconds(30)));//após 5 tentativas, corta e só fecha depois de 30 segundos sem acessar qualquer rota dentro da aplicaçao
 
-            services.AddHttpClient(name: "Refit", configureClient: options =>
-            {
-                options.BaseAddress = new Uri(uriString: configuration.GetSection(key: "CatalogoUrl").Value);
-            }).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-                .AddTypedClient(Refit.RestService.For<ICatalogoServiceRefit>);
+            //services.AddHttpClient(name: "Refit", configureClient: options =>
+            //{
+            //    options.BaseAddress = new Uri(uriString: configuration.GetSection(key: "CatalogoUrl").Value);
+            //}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+            //    .AddTypedClient(Refit.RestService.For<ICatalogoServiceRefit>);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUser, AspNetUser>();
