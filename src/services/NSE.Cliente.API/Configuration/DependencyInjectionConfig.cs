@@ -5,7 +5,6 @@ using NSE.Cliente.API.Application.Commands;
 using NSE.Cliente.API.Application.Events;
 using NSE.Cliente.API.Data;
 using NSE.Cliente.API.Data.Repositories;
-using NSE.Cliente.API.Services;
 using NSE.Core.Mediator;
 
 namespace NSE.Cliente.API.Configuration
@@ -25,8 +24,8 @@ namespace NSE.Cliente.API.Configuration
             
             services.AddScoped<ClientesContext>();
 
-            //BackgroundService
-            services.AddHostedService<RegistroClienteIntegrationHandler>();//singleton so permite injetar dependencias singleton
+            //BackgroundService (na refatoração EventuBus parte 2 esse registro nao se faz mais necessário)
+            //services.AddHostedService<RegistroClienteIntegrationHandler>();//singleton so permite injetar dependencias singleton
             
         }
     }
