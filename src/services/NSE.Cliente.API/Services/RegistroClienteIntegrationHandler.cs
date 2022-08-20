@@ -21,12 +21,21 @@ namespace NSE.Cliente.API.Services
             _serviceProvider = serviceProvider;
             _bus = bus;
         }
-
+        private void SetResponder()
+        {
+            _bus.RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(responder: async request =>
+                        await RegistrarCliente(request));
+            _bus.AdvancedBus.Connected += OnConnect;
+        }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _bus.RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(responder:async request =>
-                        await RegistrarCliente(request));
+            SetResponder();
             return Task.CompletedTask;
+        }
+       
+        private void OnConnect(Object s, EventArgs e)
+        {
+            SetResponder();//Renovando a subscription
         }
         private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistradoIntegrationEvent message)
         {
