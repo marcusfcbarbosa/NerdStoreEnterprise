@@ -9,6 +9,8 @@ namespace NSE.WebApi.Core.Controllers
     [ApiController]
     public abstract class MainController : Controller
     {
+
+
         protected ICollection<string> Erros = new List<string>();
 
         protected ActionResult CustomResponse(object result = null)
