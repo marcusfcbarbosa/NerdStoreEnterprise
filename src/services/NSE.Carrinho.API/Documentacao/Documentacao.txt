@@ -1,0 +1,3 @@
+﻿Setando o Projeto como principal antes de rodar a migration
+Add-Migration Init -StartupProject NSE.Carrinho.API
+
