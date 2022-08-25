@@ -22,7 +22,10 @@ namespace NSE.WebApp.MVC.Configuration
 
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
-            services.AddHttpClient<IAutenticacaoService, AutenticacaoService>();
+            services.AddHttpClient<IAutenticacaoService, AutenticacaoService>()
+                .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AddTransientHttpErrorPolicy
+                (p => p.CircuitBreakerAsync(handledEventsAllowedBeforeBreaking: 5, TimeSpan.FromSeconds(30)));//após 5 tentativas, corta e só fecha depois de 30 segundos sem acessar qualquer rota dentro da aplicaçao;
 
             //Primeiro tipo de HttpClientFactory usando Retry com Polly
             //services.AddHttpClient<ICatalogoService, CatalogoService>()
@@ -35,6 +38,11 @@ namespace NSE.WebApp.MVC.Configuration
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
                 .AddTransientHttpErrorPolicy
                 (p=>p.CircuitBreakerAsync(handledEventsAllowedBeforeBreaking:5,TimeSpan.FromSeconds(30)));//após 5 tentativas, corta e só fecha depois de 30 segundos sem acessar qualquer rota dentro da aplicaçao
+
+            services.AddHttpClient<ICarrinhoService, CarrinhoService>()
+                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                .AddPolicyHandler(PollyExtensions.EsperarTentar());
+                    
 
             //services.AddHttpClient(name: "Refit", configureClient: options =>
             //{

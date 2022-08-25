@@ -16,10 +16,10 @@ namespace NSE.Carrinho.API.Model
         public List<CarrinhoItem> Itens { get; set; } = new List<CarrinhoItem>();
         public ValidationResult ValidationResult { get; set; }
         public CarrinhoCliente() { }
-        public CarrinhoCliente(Guid ClienteId)
+        public CarrinhoCliente(Guid clienteId)
         {
             Id = Guid.NewGuid();
-            ClienteId = Guid.NewGuid();
+            ClienteId = clienteId;
         }
 
         internal void CalcularValorCarrinho()
@@ -65,10 +65,8 @@ namespace NSE.Carrinho.API.Model
         internal void AdicionarItem(CarrinhoItem item)
         {
             //validar se o item esta ok
-        
+
             if (!item.EhValido()) return;
-            
-            
 
             //Associar o carrinho
             item.AssociarCarrinho(Id);
@@ -80,11 +78,9 @@ namespace NSE.Carrinho.API.Model
                 item = itemExistente;
                 Itens.Remove(itemExistente);
             }
-            else
-            {
-                Itens.Add(item);
-                CalcularValorCarrinho();
-            }
+            Itens.Add(item);
+            CalcularValorCarrinho();
+
         }
         public class CarrinhoClienteValidation : AbstractValidator<CarrinhoCliente>
         {

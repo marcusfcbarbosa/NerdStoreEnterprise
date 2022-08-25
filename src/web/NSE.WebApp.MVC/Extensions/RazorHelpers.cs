@@ -18,7 +18,22 @@ namespace NSE.WebApp.MVC.Extensions
             }
             return sBuilder.ToString();
         }
+        public static string SelectOptionsPorQuantidade(this RazorPage page, int quantidade, int valorSelecionado = 0)
+        {
+            var sb = new StringBuilder();
+            for (var i = 1; i <= quantidade; i++)
+            {
+                var selected = "";
+                if (i == valorSelecionado) selected = "selected";
+                sb.Append($"<option {selected} value='{i}'>{i}</option>");
+            }
 
+            return sb.ToString();
+        }
+        public static string UnidadesPorProduto(this RazorPage page, int unidades)
+        {
+            return unidades > 1 ? $"{unidades} unidades" : $"{unidades} unidade";
+        }
         public static string FormatoMoeda(this RazorPage page, decimal valor)
         {
             return valor > 0 ? string.Format(Thread.CurrentThread.CurrentCulture, "{0:C}", valor) : "Gratuito";
