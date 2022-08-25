@@ -24,12 +24,15 @@ namespace NSE.Carrinho.API.Model
         {
             Quantidade += unidades;
         }
-
+        
         internal bool EhValido() {
             return new ItemCarrinhoValidation().Validate(this).IsValid;
         }
 
-
+        internal void AtualizarUnidades(int unidades)
+        {
+            Quantidade = unidades;
+        }
         internal decimal CalcularValor()
         {
             return Valor * Quantidade;
