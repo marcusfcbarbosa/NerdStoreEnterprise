@@ -1,7 +1,5 @@
 ﻿using NSE.WebApi.Core.Usuarios;
-using NSE.WebApp.MVC.Extensions;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -31,13 +29,7 @@ namespace NSE.WebApp.MVC.Services.Handlers
             {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
-            else
-            {
-                if (!request.RequestUri.AbsolutePath.Equals("/catalogo/produtos"))
-                {
-                    throw new CustomHttpRequestException(HttpStatusCode.Forbidden);
-                }
-            }
+           
             return base.SendAsync(request, cancellationToken);
         }
     }

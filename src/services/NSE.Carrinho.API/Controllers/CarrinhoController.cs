@@ -30,21 +30,16 @@ namespace NSE.Carrinho.API.Controllers
         public async Task<IActionResult> AdicionarItemCarrinho(CarrinhoItem item)
         {
             var carrinho = await ObterCarrinhoCliente();
-            if(carrinho == null)
-            {
+
+            if (carrinho == null)
                 ManipularNovoCarrinho(item);
-            }
             else
-            {
-                ManipularCarrinhoExistente(carrinho,item);
-            }
+                ManipularCarrinhoExistente(carrinho, item);
 
-            if(!OperacaoValida()) return CustomResponse();
+            if (!OperacaoValida()) return CustomResponse();
 
-            var result = await _carrinhoContext.SaveChangesAsync();
-            
-            if (result <= 0) AdicionarErroProcessamento("Não foi possivel persistir os dados no banco");
-            return  CustomResponse();
+            await PersistirDados();
+            return CustomResponse();
         }
         
         [HttpPut("carrinho/{produtoId}")]
@@ -120,6 +115,8 @@ namespace NSE.Carrinho.API.Controllers
         {
             var carrinho = new CarrinhoCliente(_user.ObterUserId());
             carrinho.AdicionarItem(carrinhoItem);
+
+            ValidarCarrinho(carrinho);
             _carrinhoContext.CarrinhoCliente.Add(carrinho);
         }
         private void ManipularCarrinhoExistente(CarrinhoCliente carrinho, CarrinhoItem item)
@@ -150,6 +147,8 @@ namespace NSE.Carrinho.API.Controllers
         {
             return await _carrinhoContext.CarrinhoCliente
                 .Include(i => i.Itens)
+                .AsNoTracking()
+                .AsQueryable()
                 .FirstOrDefaultAsync(c => c.ClienteId == _user.ObterUserId());
         }
 
