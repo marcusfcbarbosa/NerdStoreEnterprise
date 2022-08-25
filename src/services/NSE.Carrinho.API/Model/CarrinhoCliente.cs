@@ -30,9 +30,30 @@ namespace NSE.Carrinho.API.Model
         {
             return Itens.Any(p => p.ProdutoId == item.ProdutoId);
         }
+        internal void RemoverItem(CarrinhoItem item)
+        {
+            Itens.Remove(ObterPorId(item.ProdutoId));
+            CalcularValorCarrinho();
+        }
         internal CarrinhoItem ObterPorId(Guid produtoId)
         {
             return Itens.FirstOrDefault(x => x.ProdutoId == produtoId);
+        }
+        internal void AtualizarUnidades(CarrinhoItem item, int unidades)
+        {
+            item.AtualizarUnidades(unidades);
+            AtualizarItem(item);
+        }
+        internal void AtualizarItem(CarrinhoItem item)
+        {
+            item.AssociarCarrinho(Id);
+
+            var itemExistente = ObterPorId(item.ProdutoId);
+
+            Itens.Remove(itemExistente);
+            Itens.Add(item);
+
+            CalcularValorCarrinho();
         }
         internal bool EhValido()
         {
