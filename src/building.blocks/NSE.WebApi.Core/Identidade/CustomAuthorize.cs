@@ -10,8 +10,7 @@ namespace NSE.WebApi.Core.Identidade
     {
         public static bool ValidarClaimUsuario(HttpContext context, string claimName,string claimValue)
         {
-
-            return context.User.Identity.IsAuthenticated && 
+            return context.User.Identity.IsAuthenticated &&
                 context.User.Claims.Any(c => c.Type == claimName && c.Value.Contains(claimValue));
         }
     }

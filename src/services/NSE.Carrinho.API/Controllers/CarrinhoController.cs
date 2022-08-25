@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NSE.Carrinho.API.Data;
 using NSE.Carrinho.API.Model;
 using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Usuarios;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NSE.Carrinho.API.Controllers
@@ -11,22 +14,72 @@ namespace NSE.Carrinho.API.Controllers
     public class CarrinhoController : MainController
     {
         private readonly IAspNetUser _user;
-        public CarrinhoController(IAspNetUser user)
+        private readonly CarrinhoContext _carrinhoContext;
+        public CarrinhoController(IAspNetUser user, CarrinhoContext carrinhoContext)
         {
             _user = user;
+            _carrinhoContext = carrinhoContext;
         }
 
         [HttpGet("carrinho")]
         public async Task<CarrinhoCliente> ObterCarrinho()
         {
-            return  new CarrinhoCliente(System.Guid.Empty);
+            return await ObterCarrinhoCliente() ?? new CarrinhoCliente();
         }
 
         [HttpPost("carrinho")]
         public async Task<IActionResult> AdicionarItemCarrinho(CarrinhoItem item)
         {
+            var carrinho = await ObterCarrinhoCliente();
+            if(carrinho == null)
+            {
+                ManipularNovoCarrinho(item);
+            }
+            else
+            {
+                ManipularCarrinhoExistente(carrinho,item);
+            }
 
-            return CustomResponse();
+            if(!OperacaoValida()) return CustomResponse();
+
+            var result = await _carrinhoContext.SaveChangesAsync();
+            
+            if (result <= 0) AdicionarErroProcessamento("Não foi possivel persistir os dados no banco");
+
+            return  CustomResponse();
+        }
+        private void ManipularNovoCarrinho(CarrinhoItem carrinhoItem)
+        {
+            var carrinho = new CarrinhoCliente(_user.ObterUserId());
+            
+            carrinho.AdicionarItem(carrinhoItem);
+
+            _carrinhoContext.CarrinhoCliente.Add(carrinho);
+        }
+        private void ManipularCarrinhoExistente(CarrinhoCliente carrinho, CarrinhoItem item)
+        {
+            var produtoItemExistente = carrinho.CarrinhoItemExistente(item);
+
+            carrinho.AdicionarItem(item);
+            ValidarCarrinho(carrinho);
+
+            if (produtoItemExistente)
+            {
+                _carrinhoContext.CarrinhoItens.Update(carrinho.ObterPorId(item.ProdutoId));
+            }
+            else
+            {
+                _carrinhoContext.CarrinhoItens.Add(item);
+            }
+
+            _carrinhoContext.CarrinhoCliente.Update(carrinho);
+        }
+        private bool ValidarCarrinho(CarrinhoCliente carrinho)
+        {
+            if (carrinho.EhValido()) return true;
+
+            carrinho.ValidationResult.Errors.ToList().ForEach(e => AdicionarErroProcessamento(e.ErrorMessage));
+            return false;
         }
         [HttpPut("carrinho/{produtoId}")]
         public async Task<IActionResult> AtualizarItemCarrinho(Guid produtoId, CarrinhoItem item)
@@ -38,8 +91,14 @@ namespace NSE.Carrinho.API.Controllers
         [HttpDelete("carrinho/{produtoId}")]
         public async Task<IActionResult> RemoverItemCarrinho(Guid produtoId)
         {
-            
             return CustomResponse();
+        }
+
+        private async Task<CarrinhoCliente> ObterCarrinhoCliente()
+        {
+            return await _carrinhoContext.CarrinhoCliente
+                .Include(i => i.Itens)
+                .FirstOrDefaultAsync(c => c.ClienteId == _user.ObterUserId());
         }
     }
 }
