@@ -42,7 +42,6 @@ namespace NSE.WebApp.MVC.Configuration
             services.AddHttpClient<ICarrinhoService, CarrinhoService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar());
-                    
 
             //services.AddHttpClient(name: "Refit", configureClient: options =>
             //{
