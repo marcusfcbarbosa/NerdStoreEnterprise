@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NSE.BFF.Compras.Services;
 using NSE.WebApi.Core.Controllers;
 using System.Threading.Tasks;
 
@@ -8,6 +9,17 @@ namespace NSE.BFF.Compras.Controllers
     [ApiController]
     public class CarrinhoController : MainController
     {
+
+        private readonly ICarrinhoService _carrinhoService;
+        private readonly ICatalogoService _catalogoService;
+
+        public CarrinhoController(ICarrinhoService carrinhoService
+                                 ,ICatalogoService catalogoService)
+        {
+            _carrinhoService = carrinhoService;
+            _catalogoService = catalogoService;
+        }
+
         [HttpGet("compras/carrinho")]
         public async Task<IActionResult> Index()
         {
