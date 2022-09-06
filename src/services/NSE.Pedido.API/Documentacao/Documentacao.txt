@@ -1,0 +1,7 @@
+﻿dentro do VoucherQueries, para aplicar um SpecificationPattern
+iremos instalar o NetDevPack ( https://github.com/NetDevPack/NetDevPack )
+criação propria do Eduardo Pires 
+Instalado no NSE.Core
+<PackageReference Include="NetDevPack" Version="1.1.0" />
+
+criado o folder Speck para atender essa implementaçao do Voucher
