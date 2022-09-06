@@ -58,9 +58,7 @@ namespace NSE.WebApp.MVC.Services
         public async Task<int> ObterQuantidadeCarrinho()
         {
             var response = await _httpClient.GetAsync("/compras/carrinho-quantidade/");
-
             TratarErrosResponse(response);
-
             return await DeserializarObjetoResponse<int>(response);
         }
 
