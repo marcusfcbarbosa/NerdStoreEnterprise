@@ -12,9 +12,9 @@ namespace NSE.Cliente.API.Data
 {
     public class ClientesContext : DbContext, IUnitOfWork
     {
-        private readonly IMediatrHandler _mediatrHandler;
+        private readonly IMediatorHandler _mediatrHandler;
 
-        public ClientesContext(DbContextOptions<ClientesContext> options, IMediatrHandler mediatrHandler)
+        public ClientesContext(DbContextOptions<ClientesContext> options, IMediatorHandler mediatrHandler)
             : base(options) {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             ChangeTracker.AutoDetectChangesEnabled = false;
@@ -50,7 +50,7 @@ namespace NSE.Cliente.API.Data
 
     public static class MediatorExtension
     {
-        public static async Task PublicarEventos<T>(this IMediatrHandler mediator, T ctx) where T : DbContext
+        public static async Task PublicarEventos<T>(this IMediatorHandler mediator, T ctx) where T : DbContext
         {
             var domainEntities = ctx.ChangeTracker
                 .Entries<Entity>()

@@ -43,7 +43,7 @@ namespace NSE.Cliente.API.Services
             ValidationResult sucesso;
             using (var scope = _serviceProvider.CreateScope())
             {
-                var mediator = scope.ServiceProvider.GetRequiredService<IMediatrHandler>();
+                var mediator = scope.ServiceProvider.GetRequiredService<IMediatorHandler>();
                 sucesso = await mediator.EnviarCommando(clientCommand);
             }
             return new ResponseMessage(sucesso);
