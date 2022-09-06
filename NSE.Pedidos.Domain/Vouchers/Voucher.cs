@@ -1,5 +1,6 @@
 ﻿using NSE.Core.DomainObjects;
 using NSE.Pedidos.Domain.Vouchers.Enums;
+using NSE.Pedidos.Domain.Vouchers.Specs;
 using System;
 
 namespace NSE.Pedidos.Domain.Vouchers
@@ -16,5 +17,13 @@ namespace NSE.Pedidos.Domain.Vouchers
         public DateTime DataValidade { get; private set; }
         public bool Ativo { get; private set; }
         public bool Utilizado { get; private set; }
+
+        public bool EstaValidoParaUtilizacao()
+        {
+            return new VoucherAtivoSpecification()
+                .And(new VoucherQuantidadeSpecification())
+                .And(new VoucherDataSpecification()).IsSatisfiedBy(this);
+        }
+
     }
 }
