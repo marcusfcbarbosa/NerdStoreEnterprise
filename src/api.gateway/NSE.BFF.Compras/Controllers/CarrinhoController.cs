@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace NSE.BFF.Compras.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class CarrinhoController : MainController
     {
