@@ -11,9 +11,9 @@ namespace NSE.Cliente.API.Controllers
     
     public class ClientesController : MainController
     {
-        private readonly IMediatrHandler _mediator;
+        private readonly IMediatorHandler _mediator;
 
-        public ClientesController(IMediatrHandler mediator)
+        public ClientesController(IMediatorHandler mediator)
         {
             _mediator = mediator;
         }

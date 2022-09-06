@@ -11,5 +11,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\" />
+    <Folder Include="Events\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
 
 </Project>
