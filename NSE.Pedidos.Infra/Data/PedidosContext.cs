@@ -1,13 +1,13 @@
-﻿using FluentValidation.Results;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using NSE.Core.Data;
 using NSE.Core.DomainObjects;
 using NSE.Core.Mediator;
 using NSE.Core.Messages;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-
+using NSE.Pedidos.Domain.Vouchers;
 
 namespace NSE.Pedidos.Infra.Data
 {
@@ -15,12 +15,15 @@ namespace NSE.Pedidos.Infra.Data
     {
         private readonly IMediatorHandler _mediatorHandler;
 
-        public PedidosContext(DbContextOptions<PedidosContext> options,
-                              IMediatorHandler mediatorHandler)
-            :base(options)
+        public PedidosContext(DbContextOptions<PedidosContext> options, IMediatorHandler mediatorHandler)
+            : base(options)
         {
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            ChangeTracker.AutoDetectChangesEnabled = false;
             _mediatorHandler = mediatorHandler;
         }
+
+        public DbSet<Voucher> Vouchers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

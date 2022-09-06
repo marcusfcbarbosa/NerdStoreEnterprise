@@ -14,7 +14,7 @@ namespace NSE.Cliente.API.Configuration
         public static void RegisterServices(this IServiceCollection services)
         {
                
-            services.AddScoped<IMediatorHandler, MediatrHandler>();
+            services.AddScoped<IMediatorHandler, MediatorHandler>();
             
             services.AddScoped<IRequestHandler<RegistrarClientCommand,ValidationResult>, ClienteCommandHandler>();
 

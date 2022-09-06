@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace NSE.Core.Mediator
 {
-    public class MediatrHandler : IMediatorHandler
+    public class MediatorHandler : IMediatorHandler
     {
         private readonly IMediator _mediator;
 
-        public MediatrHandler(IMediator mediator)
+        public MediatorHandler(IMediator mediator)
         {
             _mediator = mediator;
         }
