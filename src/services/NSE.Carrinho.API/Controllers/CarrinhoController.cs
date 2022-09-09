@@ -79,6 +79,20 @@ namespace NSE.Carrinho.API.Controllers
             await PersistirDados();
             return CustomResponse();
         }
+        
+        [HttpPost]
+        [Route("carrinho/aplicar-voucher")]
+        public async Task<IActionResult> AplicarVoucher(Voucher voucher)
+        {
+            var carrinho = await ObterCarrinhoCliente();
+
+            carrinho.AplicarVoucher(voucher);
+
+            _carrinhoContext.CarrinhoCliente.Update(carrinho);
+
+            await PersistirDados();
+            return CustomResponse();
+        }
 
         #region Metodos Privados
         private async Task PersistirDados()
@@ -122,12 +136,13 @@ namespace NSE.Carrinho.API.Controllers
         private void ManipularCarrinhoExistente(CarrinhoCliente carrinho, CarrinhoItem item)
         {
             var produtoItemExistente = carrinho.CarrinhoItemExistente(item);
+
             carrinho.AdicionarItem(item);
             ValidarCarrinho(carrinho);
 
             if (produtoItemExistente)
             {
-                _carrinhoContext.CarrinhoItens.Update(carrinho.ObterPorId(item.ProdutoId));
+                _carrinhoContext.CarrinhoItens.Update(carrinho.ObterPorProdutoId(item.ProdutoId));
             }
             else
             {

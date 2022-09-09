@@ -15,73 +15,121 @@ namespace NSE.Carrinho.API.Model
         public decimal ValorTotal { get; set; }
         public List<CarrinhoItem> Itens { get; set; } = new List<CarrinhoItem>();
         public ValidationResult ValidationResult { get; set; }
-        public CarrinhoCliente() { }
+
+        public bool VoucherUtilizado { get; set; }
+        public decimal Desconto { get; set; }
+
+        public Voucher Voucher { get; set; }
+
         public CarrinhoCliente(Guid clienteId)
         {
             Id = Guid.NewGuid();
             ClienteId = clienteId;
         }
 
+        public CarrinhoCliente() { }
+
+        public void AplicarVoucher(Voucher voucher)
+        {
+            Voucher = voucher;
+            VoucherUtilizado = true;
+            CalcularValorCarrinho();
+        }
+
         internal void CalcularValorCarrinho()
         {
             ValorTotal = Itens.Sum(p => p.CalcularValor());
+            CalcularValorTotalDesconto();
         }
+
+        private void CalcularValorTotalDesconto()
+        {
+            if (!VoucherUtilizado) return;
+
+            decimal desconto = 0;
+            var valor = ValorTotal;
+
+            if (Voucher.TipoDesconto == TipoDescontoVoucher.Porcentagem)
+            {
+                if (Voucher.Percentual.HasValue)
+                {
+                    desconto = (valor * Voucher.Percentual.Value) / 100;
+                    valor -= desconto;
+                }
+            }
+            else
+            {
+                if (Voucher.ValorDesconto.HasValue)
+                {
+                    desconto = Voucher.ValorDesconto.Value;
+                    valor -= desconto;
+                }
+            }
+
+            ValorTotal = valor < 0 ? 0 : valor;
+            Desconto = desconto;
+        }
+
         internal bool CarrinhoItemExistente(CarrinhoItem item)
         {
             return Itens.Any(p => p.ProdutoId == item.ProdutoId);
         }
-        internal void RemoverItem(CarrinhoItem item)
+
+        internal CarrinhoItem ObterPorProdutoId(Guid produtoId)
         {
-            Itens.Remove(ObterPorId(item.ProdutoId));
+            return Itens.FirstOrDefault(p => p.ProdutoId == produtoId);
+        }
+
+        internal void AdicionarItem(CarrinhoItem item)
+        {
+            item.AssociarCarrinho(Id);
+
+            if (CarrinhoItemExistente(item))
+            {
+                var itemExistente = ObterPorProdutoId(item.ProdutoId);
+                itemExistente.AdicionarUnidades(item.Quantidade);
+
+                item = itemExistente;
+                Itens.Remove(itemExistente);
+            }
+
+            Itens.Add(item);
             CalcularValorCarrinho();
         }
-        internal CarrinhoItem ObterPorId(Guid produtoId)
-        {
-            return Itens.FirstOrDefault(x => x.ProdutoId == produtoId);
-        }
-        internal void AtualizarUnidades(CarrinhoItem item, int unidades)
-        {
-            item.AtualizarUnidades(unidades);
-            AtualizarItem(item);
-        }
+
         internal void AtualizarItem(CarrinhoItem item)
         {
             item.AssociarCarrinho(Id);
 
-            var itemExistente = ObterPorId(item.ProdutoId);
+            var itemExistente = ObterPorProdutoId(item.ProdutoId);
 
             Itens.Remove(itemExistente);
             Itens.Add(item);
 
             CalcularValorCarrinho();
         }
+
+        internal void AtualizarUnidades(CarrinhoItem item, int unidades)
+        {
+            item.AtualizarUnidades(unidades);
+            AtualizarItem(item);
+        }
+
+        internal void RemoverItem(CarrinhoItem item)
+        {
+            Itens.Remove(ObterPorProdutoId(item.ProdutoId));
+            CalcularValorCarrinho();
+        }
+
         internal bool EhValido()
         {
             var erros = Itens.SelectMany(i => new CarrinhoItem.ItemCarrinhoValidation().Validate(i).Errors).ToList();
             erros.AddRange(new CarrinhoClienteValidation().Validate(this).Errors);
             ValidationResult = new ValidationResult(erros);
+
             return ValidationResult.IsValid;
         }
-        internal void AdicionarItem(CarrinhoItem item)
-        {
-            //validar se o item esta ok
 
-            if (!item.EhValido()) return;
-
-            //Associar o carrinho
-            item.AssociarCarrinho(Id);
-            if (CarrinhoItemExistente(item))
-            {
-                var itemExistente = ObterPorId(item.ProdutoId);
-                itemExistente.AdicionarUnidades(item.Quantidade);
-
-                item = itemExistente;
-                Itens.Remove(itemExistente);
-            }
-            Itens.Add(item);
-            CalcularValorCarrinho();
-
-        }
         public class CarrinhoClienteValidation : AbstractValidator<CarrinhoCliente>
         {
             public CarrinhoClienteValidation()
