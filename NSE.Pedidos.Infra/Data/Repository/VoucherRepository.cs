@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NSE.Core.Data;
+using NSE.Pedidos.Domain;
 using NSE.Pedidos.Domain.Vouchers;
 using System;
 using System.Collections.Generic;
