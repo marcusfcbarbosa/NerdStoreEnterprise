@@ -9,7 +9,6 @@ namespace NSE.Cliente.API.Data.Repositories
 {
     public interface IClienteRepository : IRepository<Clientes>
     {
-        IUnitOfWork unitOfWork { get; }
         Task<Clientes> ObterPorCpf(string cpf);
     }
     public class ClienteRepository : IClienteRepository
@@ -19,7 +18,8 @@ namespace NSE.Cliente.API.Data.Repositories
         {
             _context = context;
         }
-        public IUnitOfWork unitOfWork => _context;
+        public IUnitOfWork IUnitOfWork => _context;
+
         public void Adicionar(Clientes entity)
         {
             _context.Clientes.Add(entity);

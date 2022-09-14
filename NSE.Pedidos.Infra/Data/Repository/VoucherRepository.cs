@@ -17,7 +17,8 @@ namespace NSE.Pedidos.Infra.Data.Repository
             _context = context;
         }
 
-        public IUnitOfWork UnitOfWork => _context;
+
+        public IUnitOfWork IUnitOfWork => _context;
 
         public void Adicionar(Voucher entity)
         {
