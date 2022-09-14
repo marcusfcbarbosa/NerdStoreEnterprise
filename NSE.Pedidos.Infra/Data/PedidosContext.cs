@@ -40,18 +40,23 @@ namespace NSE.Pedidos.Infra.Data
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(PedidosContext).Assembly);
 
+            //pega as entidades selecionando pela chave, que ao deletar nao seguirá o modo cascade
+            //ou seja tudo relacionando a pedido, nao deleta seu historico
             foreach (var relationship in modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys())) relationship.DeleteBehavior = DeleteBehavior.ClientSetNull;
 
+            //possui uma sequencia de inteiros a partir do 1000 incrementados um por um se comporta como se fosse uma chave primaria incrmeental
             modelBuilder.HasSequence<int>("MinhaSequencia").StartsAt(1000).IncrementsBy(1);
-
+            
             base.OnModelCreating(modelBuilder);
         }
         public async Task<bool> Commit()
         {
+            //todas as propriedades DataCadastro
             foreach (var entry in ChangeTracker.Entries()
                 .Where(entry => entry.Entity.GetType().GetProperty("DataCadastro") != null))
             {
+                //dessa forma na inclusao nao precisa setar a DataCadastro
                 if (entry.State == EntityState.Added)
                 {
                     entry.Property("DataCadastro").CurrentValue = DateTime.Now;
