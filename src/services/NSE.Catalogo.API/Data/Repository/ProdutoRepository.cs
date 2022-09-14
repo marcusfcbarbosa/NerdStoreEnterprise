@@ -19,6 +19,7 @@ namespace NSE.Catalogo.API.Data.Repository
             _context = context;
         }
         public IUnitOfWork IUnitOfWork => _context;
+        
         public async Task<IEnumerable<Produto>> ObterTodos()
         {
             return await _context.Produtos.AsNoTracking().ToListAsync();
