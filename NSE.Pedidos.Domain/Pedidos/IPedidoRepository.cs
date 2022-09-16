@@ -11,7 +11,7 @@ namespace NSE.Pedidos.Domain.Pedidos
     {
         Task<IEnumerable<Pedido>> ObterListaPorClienteId(Guid clienteId);
 
-        //DbConnection ObterConexao();
+        DbConnection ObterConexao();
 
         /* Pedido Item */
         Task<PedidoItem> ObterItemPorId(Guid id);
