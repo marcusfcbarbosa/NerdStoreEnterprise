@@ -18,7 +18,7 @@ namespace NSE.Cliente.API.Data.Repositories
         {
             _context = context;
         }
-        public IUnitOfWork IUnitOfWork => _context;
+        public IUnitOfWork UnitOfWork => _context;
 
         public void Adicionar(Clientes entity)
         {

@@ -22,11 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Application\Events\" />
-		<Folder Include="Application\Commands\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\..\NSE.Pedidos.Domain\NSE.Pedidos.Domain.csproj" />
 		<ProjectReference Include="..\..\..\NSE.Pedidos.Infra\NSE.Pedidos.Infra.csproj" />
 		<ProjectReference Include="..\..\building.blocks\NSE.Core\NSE.Core.csproj" />

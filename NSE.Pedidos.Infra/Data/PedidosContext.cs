@@ -23,12 +23,9 @@ namespace NSE.Pedidos.Infra.Data
             ChangeTracker.AutoDetectChangesEnabled = false;
             _mediatorHandler = mediatorHandler;
         }
-
-
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<PedidoItem> PedidoItems { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(
