@@ -34,7 +34,7 @@ namespace NSE.Cliente.API.Application.Commands
             _clienteRepository.Adicionar(cliente);
             //Após o cliente Criado disparar Evento de boas vindas ou quaisquer coisas que o EventHandler tratar
             cliente.AdicionarEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Cpf));
-            return await PersistirDados(_clienteRepository.IUnitOfWork);
+            return await PersistirDados(_clienteRepository.UnitOfWork);
         }
 
         

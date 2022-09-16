@@ -18,7 +18,7 @@ namespace NSE.Catalogo.API.Data.Repository
         {
             _context = context;
         }
-        public IUnitOfWork IUnitOfWork => _context;
+        public IUnitOfWork UnitOfWork => _context;
         
         public async Task<IEnumerable<Produto>> ObterTodos()
         {
