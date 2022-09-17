@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using NSE.Core.Messages.Integration;
 using NSE.MessageBus;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,9 +15,9 @@ namespace NSE.Pedidos.API.Application.Events
             _bus = bus;
         }
 
-        public Task Handle(PedidoRealizadoEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(PedidoRealizadoEvent notification, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            await _bus.PublishAsync(new PedidoRealizadoIntegrationEvent(notification.ClienteId));
         }
     }
 }
