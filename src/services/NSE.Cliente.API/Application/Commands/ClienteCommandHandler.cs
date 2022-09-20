@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 namespace NSE.Cliente.API.Application.Commands
 {
     public class ClienteCommandHandler : CommandHandler,
-                IRequestHandler<RegistrarClientCommand, ValidationResult>
+                IRequestHandler<RegistrarClientCommand, ValidationResult>,
+                IRequestHandler<AdicionarEnderecoCommand, ValidationResult>
     {
         private readonly IClienteRepository _clienteRepository;
         public ClienteCommandHandler(IClienteRepository clienteRepository)
@@ -22,12 +23,10 @@ namespace NSE.Cliente.API.Application.Commands
         public async Task<ValidationResult> Handle(RegistrarClientCommand message, CancellationToken cancellationToken)
         {
             if (!message.EhValido()) return message.validationResult;
-
-            
-            var cliente = new Clientes(message.Id, message.Nome, message.Email, message.Cpf);
+            var cliente = new Models.Cliente(message.Id, message.Nome, message.Email, message.Cpf);
             //validação
             var previousClient = await _clienteRepository.ObterPorCpf(cliente.Cpf.Numero);
-            if (previousClient != default(Clientes)) { 
+            if (previousClient != default(Models.Cliente)) {
                 AdicionarErro("Cpf ja esta em uso");
                 return _validationResult;
             }
@@ -37,6 +36,18 @@ namespace NSE.Cliente.API.Application.Commands
             return await PersistirDados(_clienteRepository.UnitOfWork);
         }
 
-        
+        public async Task<ValidationResult> Handle(AdicionarEnderecoCommand message, CancellationToken cancellationToken)
+        {
+            if (!message.EhValido()) return message.validationResult;
+
+            var endereco = new Endereco(message.Logradouro, message.Numero,
+                                        message.Complemento, message.Bairro, 
+                                        message.Cep, message.Cidade, message.Estado,
+                                        message.ClienteId);
+
+            _clienteRepository.AdicionarEndereco(endereco);
+
+            return await PersistirDados(_clienteRepository.UnitOfWork);
+        }
     }
 }

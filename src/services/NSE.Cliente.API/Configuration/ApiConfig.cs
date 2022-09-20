@@ -37,10 +37,10 @@ namespace NSE.Cliente.API.Configuration
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseCors("Acesso_Total");
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
