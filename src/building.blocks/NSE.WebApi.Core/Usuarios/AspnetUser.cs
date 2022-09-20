@@ -5,18 +5,6 @@ using System.Security.Claims;
 
 namespace NSE.WebApi.Core.Usuarios
 {
-    public interface IAspNetUser
-    {
-        string Name { get; }
-        Guid ObterUserId();
-        string ObterUserEmail();
-        string ObterUserToken();
-        bool EstaAutenticado();
-        bool PossuiRole(string role);
-        IEnumerable<Claim> ObterClaims();
-        HttpContext ObterHttpContext();
-    }
-
     public class AspNetUser : IAspNetUser
     {
         private readonly IHttpContextAccessor _accessor;//interface responsavel por obter dados do contexto da requisição http
@@ -60,42 +48,6 @@ namespace NSE.WebApi.Core.Usuarios
         public HttpContext ObterHttpContext()
         {
             return _accessor.HttpContext;
-        }
-    }
-
-    public static class ClaimsPrincipalExtensions
-    {
-        public static string GetUserId(this ClaimsPrincipal principal)
-        {
-            if (principal == null)
-            {
-                throw new ArgumentException(nameof(principal));
-            }
-
-            var claim = principal.FindFirst(ClaimTypes.NameIdentifier);
-            return claim?.Value;
-        }
-
-        public static string GetUserEmail(this ClaimsPrincipal principal)
-        {
-            if (principal == null)
-            {
-                throw new ArgumentException(nameof(principal));
-            }
-
-            var claim = principal.FindFirst("email");
-            return claim?.Value;
-        }
-
-        public static string GetUserToken(this ClaimsPrincipal principal)
-        {
-            if (principal == null)
-            {
-                throw new ArgumentException(nameof(principal));
-            }
-
-            var claim = principal.FindFirst("JWT");
-            return claim?.Value;
         }
     }
 }

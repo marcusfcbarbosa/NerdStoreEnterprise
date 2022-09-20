@@ -87,6 +87,7 @@ namespace NSE.WebApp.MVC.Controllers
 
             var claims = new List<Claim>();
             claims.Add(new Claim("JWT", usuarioRespostaLogin.AccessToken));
+            claims.Add(new Claim("UserId", usuarioRespostaLogin.UsuarioToken.Id));
             claims.AddRange(token.Claims);
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

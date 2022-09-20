@@ -3,15 +3,15 @@ using System;
 
 namespace NSE.Cliente.API.Models
 {
-    public class Clientes : Entity, IAggregateRoot
+    public class Cliente : Entity, IAggregateRoot
     {
-        protected Clientes() { }
+        protected Cliente() { }
         public string Nome { get; private set; }
         public Email Email { get; private set; }
         public Cpf Cpf { get; private set; }
         public bool Status { get; private set; }
         public Endereco Endereco { get; private set; }
-        public Clientes(Guid id,string nome, string email, string cpf)
+        public Cliente(Guid id,string nome, string email, string cpf)
         {
             Id = id;
             Nome = nome;
@@ -33,7 +33,7 @@ namespace NSE.Cliente.API.Models
     public class Endereco : Entity
     {
         public Guid ClienteId { get; private set; }
-        public Clientes Cliente { get; private set; }
+        public Cliente Cliente { get; private set; }
         
         public string Logradouro { get; private set; }
         public string Nome { get; private set; }
@@ -44,17 +44,16 @@ namespace NSE.Cliente.API.Models
         public string Cidade { get; private set; }
         public string Estado { get; private set; }
         protected Endereco() { }
-        public Endereco(string nome, string numero, string complemento,
-            string bairro, string cep, string cidade, string estado, string logradouro)
+        public Endereco(string logradouro, string numero, string complemento, string bairro, string cep, string cidade, string estado, Guid clienteId)
         {
-            Nome = nome;
+            Logradouro = logradouro;
             Numero = numero;
             Complemento = complemento;
             Bairro = bairro;
             Cep = cep;
             Cidade = cidade;
             Estado = estado;
-            Logradouro = logradouro;
+            ClienteId = clienteId;
         }
     }
 }

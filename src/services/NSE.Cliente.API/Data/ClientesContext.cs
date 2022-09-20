@@ -20,7 +20,7 @@ namespace NSE.Cliente.API.Data
             ChangeTracker.AutoDetectChangesEnabled = false;
             _mediatrHandler = mediatrHandler;
         }
-        public DbSet<Clientes> Clientes { get; set; }
+        public DbSet<Models.Cliente> Clientes { get; set; }
         public DbSet<Endereco> Enderecos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
