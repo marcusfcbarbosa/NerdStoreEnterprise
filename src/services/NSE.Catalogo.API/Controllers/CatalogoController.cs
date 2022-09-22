@@ -27,12 +27,18 @@ namespace NSE.Catalogo.API.Controllers
             return await _produtoRepository.ObterTodos();
         }
 
-        [ClaimsAuthorize("Catalogo", "Ler")]
+        //[ClaimsAuthorize("Catalogo", "Ler")]
         [HttpGet("catalogo/produtos/{id}")]
         public async Task<Produto> ProdutoDetalhe(Guid id)
         {
             //throw new Exception(message:"Erro");
             return await _produtoRepository.ObterPorId(id);
+        }
+
+        [HttpGet("catalogo/produtos/lista/{ids}")]
+        public async Task<IEnumerable<Produto>> ObterProdutosPorId(string ids)
+        {
+            return await _produtoRepository.ObterProdutosPorId(ids);
         }
     }
 }

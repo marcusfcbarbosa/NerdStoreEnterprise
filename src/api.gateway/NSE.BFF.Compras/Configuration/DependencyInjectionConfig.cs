@@ -36,7 +36,11 @@ namespace NSE.BFF.Compras.Configuration
                 .AddTransientHttpErrorPolicy(
                     p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(3)));
 
-
+            services.AddHttpClient<IClienteService, ClienteService>()
+                    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                    .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                    .AddTransientHttpErrorPolicy(
+                     p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(3)));
 
         }
     }
