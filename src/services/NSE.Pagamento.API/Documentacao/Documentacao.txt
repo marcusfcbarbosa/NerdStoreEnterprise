@@ -1,0 +1,33 @@
+﻿Entre API de pedido e API de pagamento
+é feita via comunicação GRPC
+=====================
+o PedidoCommandHandler ao receber o comando cria um evento PedidoRealizadoEvent
+=====================
+Estoque Flutuante, Processo de AntiFraude, Retira o item do Catálogo
+a api do pagamento entra no processo e vai para o pagamento
+=====================
+quais melhores formas de receber pagamentos online
+
+PayPal
+pagar.me  ===> apresenta lib .net core
+	https://cadastro.pagar.me/boas-vindas-ao-pagarme
+	existem ambientes de teste entre outros, com chave de acesso
+	Install-Package Pagar.me
+
+braspag   ===> apresenta lib .net core
+wirecard  ===> apresenta lib .net core
+PagSeguro ===> apresenta lib .net core
+iugi       ===> apresenta lib .net core
+
+Como escolher baseado em taxa a atendimento
+========================
+API de pagamento será bem simples
+no Facade, cuidado com acomplamento
+
+========================
+NSE.Pagamentos.NerdsPag  ===> Se comporta como se fosse uma lib
+
+========================
+
+Facade, intuito de desacoplar ou acoplar funcionalidades 
+sem 
