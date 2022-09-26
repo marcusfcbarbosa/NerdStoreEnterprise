@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NetDevPack.Domain;
 using NSE.Core.Messages.Integration;
 using NSE.MessageBus;
 using NSE.Pagamento.API.Models;
@@ -32,6 +31,8 @@ namespace NSE.Pagamento.API.Services
 
         private void SetSubscribers()
         {
+            //Subscribers sao os que olham a fila
+
             //_bus.SubscribeAsync<PedidoCanceladoIntegrationEvent>("PedidoCancelado", async request =>
             //await CancelarPagamento(request));
 
