@@ -135,7 +135,5 @@ namespace NSE.MessageBus
             TryConnect();
             return _bus.RespondAsync(responder);
         }
-
-
     }
 }

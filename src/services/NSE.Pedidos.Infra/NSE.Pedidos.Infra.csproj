@@ -20,8 +20,8 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\building.blocks\NSE.Core\NSE.Core.csproj" />
     <ProjectReference Include="..\NSE.Pedidos.Domain\NSE.Pedidos.Domain.csproj" />
-    <ProjectReference Include="..\src\building.blocks\NSE.Core\NSE.Core.csproj" />
   </ItemGroup>
 
 </Project>
