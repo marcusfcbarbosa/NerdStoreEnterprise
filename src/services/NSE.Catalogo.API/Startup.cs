@@ -33,8 +33,13 @@ namespace NSE.Catalogo.API
         {
 
             services.AddApiConfiguration(Configuration);
+            
+            services.AddMessageBusConfiguration(Configuration);
+
             services.AddJWTConfiguration(Configuration);
+            
             services.AddSwaggerConfiguration();
+            
             services.RegisterServices();
             
         }
