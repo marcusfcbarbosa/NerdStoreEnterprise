@@ -56,30 +56,22 @@ namespace NSE.Pagamento.API.Services
             var transacoes = await _pagamentoRepository.ObterTransacaoesPorPedidoId(pedidoId);
             var transacaoAutorizada = transacoes?.FirstOrDefault(t => t.Status == StatusTransacao.Autorizado);
             var validationResult = new ValidationResult();
-
             if (transacaoAutorizada == null) throw new DomainException($"Transação não encontrada para o pedido {pedidoId}");
-
             var transacao = await _pagamentoFacade.CapturarPagamento(transacaoAutorizada);
-
             if (transacao.Status != StatusTransacao.Pago)
             {
                 validationResult.Errors.Add(new ValidationFailure("Pagamento",
                     $"Não foi possível capturar o pagamento do pedido {pedidoId}"));
-
                 return new ResponseMessage(validationResult);
             }
-
             transacao.PagamentoId = transacaoAutorizada.PagamentoId;
             _pagamentoRepository.AdicionarTransacao(transacao);
-
             if (!await _pagamentoRepository.UnitOfWork.Commit())
             {
                 validationResult.Errors.Add(new ValidationFailure("Pagamento",
                     $"Não foi possível persistir a captura do pagamento do pedido {pedidoId}"));
-
                 return new ResponseMessage(validationResult);
             }
-
             return new ResponseMessage(validationResult);
         }
 
