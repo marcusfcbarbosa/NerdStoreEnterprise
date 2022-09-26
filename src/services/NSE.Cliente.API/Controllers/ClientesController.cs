@@ -41,11 +41,11 @@ namespace NSE.Cliente.API.Controllers
         }
 
         //Metodo base para criar novo cliente 
-        //[HttpGet("clientes")]
-        //public async Task<ActionResult> Index()
-        //{
-        //    var result =  await _mediator.EnviarCommando(new RegistrarClientCommand(Guid.NewGuid(),"marcus",$"marcus{Guid.NewGuid().ToString()}@teste.com","21015511872"));
-        //    return CustomResponse(result);
-        //}
+        [HttpGet("clientes")]
+        public async Task<ActionResult> Index()
+        {
+            var result = await _mediator.EnviarCommando(new RegistrarClientCommand(Guid.NewGuid(), "marcus", $"marcus{Guid.NewGuid().ToString()}@teste.com", "21015511872"));
+            return CustomResponse(result);
+        }
     }
 }
