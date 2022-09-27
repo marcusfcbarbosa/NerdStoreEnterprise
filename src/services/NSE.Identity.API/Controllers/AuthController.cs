@@ -134,7 +134,7 @@ namespace NSE.Identity.API.Controllers
             {
                 Issuer = currentIssuer,
                 Subject = identityClaims,
-                Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiracaoHoras),//padrao UTC
+                Expires = DateTime.UtcNow.AddHours(1),//padrao UTC
                 SigningCredentials = key
             });
             return tokenHandler.WriteToken(token);
@@ -162,7 +162,7 @@ namespace NSE.Identity.API.Controllers
             return new UsuarioRespostaLogin
             {
                 AccessToken = encodedToken,
-                ExpiresIn = TimeSpan.FromHours(_appSettings.ExpiracaoHoras).TotalSeconds,
+                ExpiresIn = TimeSpan.FromHours(1).TotalSeconds,
                 UsuarioToken = new UsuarioToken
                 {
                     Id = user.Id,

@@ -26,3 +26,8 @@ Toda api bota nesse endpoint aqui
 		"y": "YrWessszIQ0M04AFR_lQDOiy3mf_EAQglVNDHihVZZo"
 	}]
 }
+=========================================================
+Para que outras apis consigam ter acesso a rota exposta pela Identidade
+devemos instalar no  NSE.WebApi.Core (onde concentra todas as chaves, que todas as apis fazem leitura)
+
+<PackageReference Include="NetDevPack.Security.JwtExtensions" Version="1.0.1" />
