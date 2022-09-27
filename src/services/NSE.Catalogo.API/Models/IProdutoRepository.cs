@@ -6,6 +6,8 @@ namespace NSE.Catalogo.API.Models
 {
     public interface IProdutoRepository : IRepository<Produto>
     {
+
+        Task<PagedResult<Produto>> ObterTodosPaginado(int pageSize, int pageIndex,string query =null);
         Task<List<Produto>> ObterProdutosPorId(string ids);
     }
 }
