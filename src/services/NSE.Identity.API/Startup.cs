@@ -41,7 +41,7 @@ namespace NSE.Identity.API
         {
 
             app.UseSwaggerConfiguration();
-            app.AddApplication(env);
+            app.UseApiConfiguration(env);
 
         }
     }
