@@ -18,6 +18,10 @@ namespace NSE.Identity.API.Configuration
         public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services,
             IConfiguration configuration)
         {
+            //refreshToken
+            var appSettingsSection = configuration.GetSection("AppTokenSettings");
+            services.Configure<AppTokenSettings>(appSettingsSection);
+
             //Persistencias das chaves
             services.AddJwksManager(options => options.Algorithm = Algorithm.ES256)
                 .PersistKeysToDatabaseStore<ApplicationDBContext>();
