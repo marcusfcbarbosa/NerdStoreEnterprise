@@ -1,0 +1,28 @@
+﻿nugetPacakge
+
+NetDevPack.Security.JwtSigningCredentials
+
+<PackageReference Include="NetDevPack.Security.JwtSigningCredentials.AspNetCore" Version="1.0.3" />
+<PackageReference Include="NetDevPack.Security.JwtSigningCredentials.Store.EntityFrameworkCore" Version="1.0.3" />
+
+é gerada uma nova tabela chamada SecurityKeys no IdentityConfig.cs vc consegue ver melhor
+no ApplicationDBContext.cs também é possivel ver as modificaçoes
+
+Add-Migration SecKeys -StartUpProject NSE.Identity.API
+
+Update-Database -StartUpProject NSE.Identity.API
+
+
+https://localhost:44310/minha-chave
+Toda api bota nesse endpoint aqui
+{
+	"keys": [{
+		"kty": "EC",
+		"use": "sig",
+		"alg": "ES256",
+		"kid": "C3WFFD3A1cH8tNatMGZ1jQ",
+		"crv": "P-256",
+		"x": "N0vwaLpBtr9OTq8U22w3LrgM6l4mG-ekNpk_Sblr6Ww",
+		"y": "YrWessszIQ0M04AFR_lQDOiy3mf_EAQglVNDHihVZZo"
+	}]
+}

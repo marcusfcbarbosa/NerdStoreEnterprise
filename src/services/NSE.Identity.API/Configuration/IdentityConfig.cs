@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using NetDevPack.Security.JwtSigningCredentials;
 using NSE.Identity.API.Data;
 using NSE.Identity.API.Extensions;
 using NSE.WebApi.Core.Identidade;
@@ -17,6 +18,10 @@ namespace NSE.Identity.API.Configuration
         public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services,
             IConfiguration configuration)
         {
+            //Persistencias das chaves
+            services.AddJwksManager(options => options.Algorithm = Algorithm.ES256)
+                .PersistKeysToDatabaseStore<ApplicationDBContext>();
+
             services.AddDbContext<ApplicationDBContext>(optionsAction: options
                   => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 

@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NetDevPack.Security.JwtSigningCredentials.Interfaces;
 using NSE.Core.Messages.Integration;
 using NSE.Identity.API.Extensions;
 using NSE.Identity.API.Models;
 using NSE.MessageBus;
 using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Identidade;
+using NSE.WebApi.Core.Usuarios;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -26,16 +28,23 @@ namespace NSE.Identity.API.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
         private readonly IMessageBus _bus;
+        
+        private readonly IAspNetUser _aspNetUser;
+        private readonly IJsonWebKeySetService _jsonWebKeySetService;
 
         public AuthController(SignInManager<IdentityUser> signInManager,
                              UserManager<IdentityUser> userManager,
                              IOptions<AppSettings> appSettings,
-                             IMessageBus bus)
+                             IMessageBus bus,
+                             IAspNetUser aspNetUser,
+                             IJsonWebKeySetService jsonWebKeySetService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;//tem que ser em IOptions para poder ler o json
             _bus = bus;
+            _aspNetUser = aspNetUser;
+            _jsonWebKeySetService = jsonWebKeySetService;
         }
 
         [HttpPost("nova-conta")]
@@ -115,16 +124,19 @@ namespace NSE.Identity.API.Controllers
         private string CodificarToken(ClaimsIdentity identityClaims)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+            var currentIssuer =
+                $"{_aspNetUser.ObterHttpContext().Request.Scheme}://{_aspNetUser.ObterHttpContext().Request.Host}";
+
+            //var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = _jsonWebKeySetService.GetCurrent();//Dessa forma nao precisa mais ficar tendo o secret em cada uma das apis
             var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
             {
-                Issuer = _appSettings.Emissor,
-                Audience = _appSettings.ValidoEm,
+                Issuer = currentIssuer,
                 Subject = identityClaims,
                 Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiracaoHoras),//padrao UTC
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = key
             });
-
             return tokenHandler.WriteToken(token);
         }
         private async Task<ClaimsIdentity> ObterClaimsUsuario(ICollection<Claim> claims, IdentityUser user)
