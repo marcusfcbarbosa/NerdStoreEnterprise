@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using NetDevPack.Security.JwtExtensions;
 using System.Text;
 
 namespace NSE.WebApi.Core.Identidade
@@ -17,27 +18,17 @@ namespace NSE.WebApi.Core.Identidade
             // JWT
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
-
             var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(bearerOptions =>
+            }).AddJwtBearer(x =>
             {
-                bearerOptions.RequireHttpsMetadata = true;
-                bearerOptions.SaveToken = true;
-                bearerOptions.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,//sempre validar o emissor do token
-                    ValidateAudience = true,//onde esse token é valido
-                    ValidAudience = appSettings.ValidoEm,//audiencia valida
-                    ValidIssuer = appSettings.Emissor //emissor valido (onde esse token sera valido)
-                };
+                x.RequireHttpsMetadata = true;
+                x.SaveToken = true;
+                x.SetJwksOptions(new JwkOptions(appSettings.AutenticacaoJwksUrl));
             });
             return services;
         }
