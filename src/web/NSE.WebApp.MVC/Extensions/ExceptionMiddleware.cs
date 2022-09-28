@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using NSE.WebApp.MVC.Services;
 using Polly.CircuitBreaker;
 using Refit;
 
@@ -10,12 +11,15 @@ namespace NSE.WebApp.MVC.Extensions
     {
 
         private readonly RequestDelegate _next;
+        private static IAutenticacaoService _autenticacaoService;//nao pode injetar serviços scopped em singleton
         public ExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
         }
-        public async Task InvokeAsync(HttpContext httpContext)
+
+        public async Task InvokeAsync(HttpContext httpContext, IAutenticacaoService autenticacaoService)
         {
+            _autenticacaoService = autenticacaoService;
             try
             {
                 await _next(httpContext);
@@ -36,38 +40,46 @@ namespace NSE.WebApp.MVC.Extensions
             {
                 HandleCircuitBreakerExceptionAsync(httpContext);
             }
+            //catch (RpcException ex)
+            //{
+            //    //400 Bad Request	    INTERNAL
+            //    //401 Unauthorized      UNAUTHENTICATED
+            //    //403 Forbidden         PERMISSION_DENIED
+            //    //404 Not Found         UNIMPLEMENTED
+
+            //    var statusCode = ex.StatusCode switch
+            //    {
+            //        StatusCode.Internal => 400,
+            //        StatusCode.Unauthenticated => 401,
+            //        StatusCode.PermissionDenied => 403,
+            //        StatusCode.Unimplemented => 404,
+            //        _ => 500
+            //    };
+
+            //    var httpStatusCode = (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), statusCode.ToString());
+
+            //    HandleRequestExceptionAsync(httpContext, httpStatusCode);
+            //}
         }
         private static void HandleRequestExceptionAsync(HttpContext context, HttpStatusCode statusCode)
         {
             if (statusCode == HttpStatusCode.Unauthorized)
             {
+                if (_autenticacaoService.TokenExpirado())
+                {
+                    if (_autenticacaoService.RefreshTokenValido().Result)
+                    {
+                        context.Response.Redirect(context.Request.Path);
+                        return;
+                    }
+                }
+
+                _autenticacaoService.Logout();
                 context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");
                 return;
             }
 
             context.Response.StatusCode = (int)statusCode;
-        }
-        //todo erro que acontece passa por aqui
-        private static void HandleRequestExceptionAsyn(HttpContext context, CustomHttpRequestException httpRequestException)
-        {
-            switch (httpRequestException._statusCode)
-            {
-                case HttpStatusCode.Unauthorized:
-                    context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");//ReturnUrl=Pega a rota que estava antes de ter gerado a Exception (de onde vc estava vindo)
-                    return;
-            }
-            context.Response.StatusCode = (int)httpRequestException._statusCode;
-        }
-        //adequado para trabalhar com refit
-        private static void HandleRequestExceptionAsyn(HttpContext context, HttpStatusCode httpStatusCode)
-        {
-            switch (httpStatusCode)
-            {
-                case HttpStatusCode.Unauthorized:
-                    context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");//ReturnUrl=Pega a rota que estava antes de ter gerado a Exception (de onde vc estava vindo)
-                    return;
-            }
-            context.Response.StatusCode = (int)httpStatusCode;
         }
         private static void HandleCircuitBreakerExceptionAsync(HttpContext context)
         {
