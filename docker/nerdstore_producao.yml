@@ -1,6 +1,18 @@
 version: "3"
 
+
 services:
+
+  rabbitmq:
+      image: rabbitmq:3-management
+      container_name: rabbit-nerdstore
+      environment:
+          RABBITMQ_DEFAULT_USER: "guest"
+          RABBITMQ_DEFAULT_PASS: "guest"
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+
   web-mvc:
     image: marcusfcbarbosa/nerdstore-web-mvc-ecommerce:latest
     container_name: nerdstore-web-mvc-ecommerce
@@ -10,10 +22,14 @@ services:
     ports:
       - "5001:5001"
       - "5003:5003"
+      # essas portas sao de comunicação externa
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://*:5001
-  
+      - ASPNETCORE_URLS=http://*:5001     
+    # http://localhost:5001/login vai subir nessa rota o container
+    depends_on:
+      - api-catalogo
+
   api-catalogo:
     image: marcusfcbarbosa/nerdstore-api-catalogo:latest
     container_name: nerdstore-api-catalogo
@@ -24,4 +40,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:44307
+    depends_on:
+      - rabbitmq
 

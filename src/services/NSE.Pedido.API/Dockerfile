@@ -7,10 +7,14 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["src/services/NSE.Pedido.API/NSE.Pedido.API.csproj", "src/services/NSE.Pedido.API/"]
-RUN dotnet restore "src/services/NSE.Pedido.API/NSE.Pedido.API.csproj"
+COPY ["./services/NSE.Pedido.API/NSE.Pedido.API.csproj", "services/NSE.Pedido.API/"]
+COPY ["./building.blocks/NSE.Core/NSE.Core.csproj", "building.blocks/NSE.WebAPI.Core/"]
+COPY ["./building.blocks/NSE.WebApi.Core/NSE.WebApi.Core.csproj", "building.blocks/NSE.WebApi.Core/NSE.WebApi.Core.csproj"]
+COPY ["./building.blocks/NSE.MessageBus/NSE.MessageBus.csproj", "building.blocks/NSE.MessageBus/"]
+
+RUN dotnet restore "services/NSE.Pedido.API/NSE.Pedido.API.csproj"
 COPY . .
-WORKDIR "/src/src/services/NSE.Pedido.API"
+WORKDIR "services/NSE.Pedido.API"
 RUN dotnet build "NSE.Pedido.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
