@@ -1,0 +1,27 @@
+﻿MVC ========> API-BFF Compras (RestJson)
+
+API-BFF Compras ========> API CARRINHO (Via GRPC)
+
+API CARRINHO sera o servidor GRPC
+		 trabalhando com essa versao 
+		 <PackageReference Include="Grpc.AspNetCore" Version="2.31.0" />
+		 Install-Package Grpc.AspNetCore
+
+API-BFF Compras sera o client
+====================================
+no arquivo .proto
+
+	-não existe GUID
+	-não existe decimal(tem q ser double)
+======================================
+
+Deve-se configurar o "NSE.Carrinho.API.csproj", para expor o arquivo .proto
+Pode ser Server, Client , Bidirecional
+
+<ItemGroup>
+	<Protobuf Include="Protos\carrinho.proto" GrpcServices="Server" />
+</ItemGroup>
+
+
+======================================
+Escrever um serviço que trabalha com arquivo .proto
