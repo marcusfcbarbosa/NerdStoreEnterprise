@@ -90,7 +90,7 @@ namespace NSE.Identity.API.Services
             {
                 Issuer = currentIssuer,
                 Subject = identityClaims,
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddMinutes(1),//estranho que quando vc todo JWT dura no minimo 5 minutos ou seja 6 minutos para expirar
                 SigningCredentials = key
             });
 

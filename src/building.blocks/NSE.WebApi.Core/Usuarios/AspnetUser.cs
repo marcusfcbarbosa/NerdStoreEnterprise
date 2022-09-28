@@ -49,5 +49,10 @@ namespace NSE.WebApi.Core.Usuarios
         {
             return _accessor.HttpContext;
         }
+
+        public string ObterUserRefreshToken()
+        {
+            return EstaAutenticado() ? _accessor.HttpContext.User.GetUserRefreshToken() : "";
+        }
     }
 }

@@ -47,3 +47,7 @@ public class ApplicationDBContext : IdentityDbContext, ISecurityKeyContext
     }
 	execute
 Add-Migration RefreshToken -StartUpProject NSE.Identity.API
+===================================================
+Nao existe uma rota que chama caso token tenha perdido a validade
+caso em algum request para as apis tenha retornado 401 NOTA AUTHORIZED
+o midleware ExceptionMiddleware.cs pega e trata
