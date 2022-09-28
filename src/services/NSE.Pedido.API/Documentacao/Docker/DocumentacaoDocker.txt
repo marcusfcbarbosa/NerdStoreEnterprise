@@ -1,14 +1,14 @@
 ﻿Existem 3 pilares do Docker
 
 Client  (sua linha de comando)
-	- Docker Build compila imagem
-	- Docker Pull  download imagem
-	- Docker run   rodar imagem através de um container
+- Docker Build compila imagem
+- Docker Pull  download imagem
+- Docker run   rodar imagem através de um container
 
 Docker_Host (pode ser sua local, ou qualquer maquina que esta rodando o docker)
-   - Docker Daemon = Orquestrador do Docker, que fica exposto através de uma api REST que pega os comandos que digito no Client
-   - Containers 
-   - Images
+- Docker Daemon = Orquestrador do Docker, que fica exposto através de uma api REST que pega os comandos que digito no Client
+- Containers 
+- Images
 
 Registry (Repositorio de imagens do Docker)
 imagem do Oracle, do Cassandra, como se fosse um nuget de imagens por exemplo
@@ -18,13 +18,11 @@ DockerHub = Repositorio Publico de Imagens
 
 Obs: quando vc quer que as aplicações se comuniquem, 
 vc precisa colocar elas dentro da mesma rede
-
-
 =================================================================
 !!!!
 informações que vc salva na hora de deletar um container
-data volumes= diretorios fisicos dentro do ambiente daemon, 
-			para que varios containers possam consumir mesmas informações
+data volumes = diretorios fisicos dentro do ambiente daemon, 
+		para que varios containers possam consumir mesmas informações
 =================================================================
 se nao guardar dados dentro de um volume e matar o container
 todos os dados transitados dentro do container morre
@@ -36,77 +34,93 @@ DockerFile  => é onde começa a levar sua aplicação para container
 Docker Compose => é o que faz tudo ocorrer ao mesmo tempo
 Portainer => gerenciador de containers, para nao ter 
 que ficar trabalhando com linha de comando toda hora
-
 =================================================================
 prompt : docker info
 
 Client:
- Context:    default
- Debug Mode: false
- Plugins:
-  buildx: Docker Buildx (Docker Inc., v0.9.1)
-  compose: Docker Compose (Docker Inc., v2.10.2)
-  extension: Manages Docker extensions (Docker Inc., v0.2.9)
-  sbom: View the packaged-based Software Bill Of Materials (SBOM) for an image (Anchore Inc., 0.6.0)
-  scan: Docker Scan (Docker Inc., v0.19.0)
+Context:    default
+Debug Mode: false
+Plugins:
+buildx: Docker Buildx (Docker Inc., v0.9.1)
+compose: Docker Compose (Docker Inc., v2.10.2)
+extension: Manages Docker extensions (Docker Inc., v0.2.9)
+sbom: View the packaged-based Software Bill Of Materials (SBOM) for an image (Anchore Inc., 0.6.0)
+scan: Docker Scan (Docker Inc., v0.19.0)
 
 Server:
- Containers: 2
-  Running: 1
-  Paused: 0
-  Stopped: 1
- Images: 8
- Server Version: 20.10.17
- Storage Driver: overlay2
-  Backing Filesystem: extfs
-  Supports d_type: true
-  Native Overlay Diff: true
-  userxattr: false
- Logging Driver: json-file
- Cgroup Driver: cgroupfs
- Cgroup Version: 1
- Plugins:
-  Volume: local
-  Network: bridge host ipvlan macvlan null overlay
-  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
- Swarm: inactive
- Runtimes: runc io.containerd.runc.v2 io.containerd.runtime.v1.linux
- Default Runtime: runc
- Init Binary: docker-init
- containerd version: 9cd3357b7fd7218e4aec3eae239db1f68a5a6ec6
- runc version: v1.1.4-0-g5fd4c4d
- =================================================================
- Seguindo essa documentação
- https://docs.portainer.io/start/install/server/docker/wsl
- 1- Criar volume
- docker volume create portainer_data
- 2- baixar a imagem do portainer e fazer o download e configurar tudo
- docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+Containers: 2
+Running: 1
+Paused: 0
+Stopped: 1
+Images: 8
+Server Version: 20.10.17
+Storage Driver: overlay2
+Backing Filesystem: extfs
+Supports d_type: true
+Native Overlay Diff: true
+userxattr: false
+Logging Driver: json-file
+Cgroup Driver: cgroupfs
+Cgroup Version: 1
+Plugins:
+Volume: local
+Network: bridge host ipvlan macvlan null overlay
+Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+Swarm: inactive
+Runtimes: runc io.containerd.runc.v2 io.containerd.runtime.v1.linux
+Default Runtime: runc
+Init Binary: docker-init
+containerd version: 9cd3357b7fd7218e4aec3eae239db1f68a5a6ec6
+runc version: v1.1.4-0-g5fd4c4d
+=================================================================
+Seguindo essa documentação
+https://docs.portainer.io/start/install/server/docker/wsl
+1- Criar volume
+docker volume create portainer_data
+2- baixar a imagem do portainer e fazer o download e configurar tudo
+docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
 
- senha do Portainer
- login: admin
- senha: Mfcb@@4625%%
+senha do Portainer
+login: admin
+senha: Mfcb@@4625%%
 
- Gerenciamento de imagens usando portainer
- https://localhost:9443/#!/home
- https://localhost:9443/#!/2/docker/images
- =========================
-  ao entrar no caminho do projeto MVC
-  cd C:\Users\Usuário\source\repos\NerdStoreEnterprise\src\web\NSE.WebApp.MVC
-     C:\Users\Usuário\source\repos\NerdStoreEnterprise\src\web\NSE.WebApp.MVC\NSE.WebApp.MVC.csproj
-  Obs:DockerFile, somente le diretorios abaixo e nao acima
+Gerenciamento de imagens usando portainer
+https://localhost:9443/#!/home
+https://localhost:9443/#!/2/docker/images
+===========================================================================
+ao entrar no caminho do projeto MVC
+cd C:\Users\Usuário\source\repos\NerdStoreEnterprise\src\web\NSE.WebApp.MVC
+    C:\Users\Usuário\source\repos\NerdStoreEnterprise\src\web\NSE.WebApp.MVC\NSE.WebApp.MVC.csproj
+Obs:DockerFile, somente le diretorios abaixo e nao acima
 
-  usar o DockerFile para compilar uma imagem nova
-  docker build .
-  ==========================
-  Para gerar a imagem da aplicação
+usar o DockerFile para compilar uma imagem nova
+docker build .
+===========================================================================
+Para gerar a imagem da aplicação
 
-  crie o arquivo .yml coloque as configuração
-  Entre no path de onde é a raiz da aplicacao e rode o comando
-  C:\Users\Usuário\source\repos\NerdStoreEnterprise\docker\nerdstore_producao.yml
+crie o arquivo .yml coloque as configuração
+Entre no path de onde é a raiz da aplicacao e rode o comando
+C:\Users\Usuário\source\repos\NerdStoreEnterprise\docker\nerdstore_producao.yml
 
-  docker-compose -f nerdstore_producao.yml up
+docker-compose -f nerdstore_producao.yml up
 
-  quando gerar a imagem acesse
+Porém, quando se faz alguma modificação em imagem que ja existe vc deve rodar
 
-  http://localhost:5001/login
+docker-compose -f nerdstore_producao.yml up --build (ou deletar a imagem e subir de novo)
+
+quando gerar a imagem acesse
+
+http://localhost:5001/login
+  ================================================================================
+Docker Compose nada mais é do que o arquivo .yml
+C:\Users\Usuário\source\repos\NerdStoreEnterprise\docker\nerdstore_producao.yml
+
+Por padrão eles deixam no diretorio raiz, perto da solution
+================================================================================
+Obs: Banco LocalDB, nao funciona para o Docker
+certificados selfsigned dentro do container, nao funciona, 
+pois o asp.net interpreta que vc esta tentando acessar alguma aplicação de fora
+
+================================================================================
+Dentro de catalogo, apareceu esse erro aqui, devido a falha na hora de subir a fila
+nerdstore-api-catalogo exited with code 139
