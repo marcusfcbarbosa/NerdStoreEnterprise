@@ -1,0 +1,3 @@
+﻿MVC ========> API-BFF Compras (RestJson)
+
+API-BFF Compras ========> API CARRINHO (Via GRPC)
